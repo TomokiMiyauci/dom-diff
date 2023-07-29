@@ -10,10 +10,14 @@ import {
   MovementPatch,
   Patch,
   PatchType,
-  Path,
   SubstitutePatch,
 } from "./diff.ts";
-import { remove, removeAttributeNode, replaceWith } from "./utils.ts";
+import {
+  remove,
+  removeAttributeNode,
+  replaceWith,
+  resolvePaths,
+} from "./utils.ts";
 import { format } from "./deps.ts";
 
 export function applyPatch(root: Node, patches: Iterable<Patch>): void {
@@ -121,32 +125,6 @@ export function applyMovementPatch(root: Node, patch: MovementPatch): void {
 
   parent.insertBefore(sourceNode, targetNode);
 }
-
-export function resolvePaths(
-  node: Node,
-  paths: readonly Path[],
-): Node | Attr | undefined {
-  if (!paths.length) return node;
-
-  const [first, ...rest] = paths;
-
-  if (typeof first === "string") {
-    if (node instanceof Element) {
-      return (node.attributes as FixedNamedNodeMap)[first];
-    }
-
-    return;
-  }
-  const child = node.childNodes[first];
-
-  if (!child) return;
-
-  return resolvePaths(child, rest);
-}
-
-type FixedNamedNodeMap =
-  & { [key in string]?: Attr }
-  & NamedNodeMap;
 
 const enum Template {
   NotExist = "{name} does not exist",
