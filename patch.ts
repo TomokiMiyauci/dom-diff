@@ -14,6 +14,7 @@ import {
   SubstitutePatch,
 } from "./diff.ts";
 import { remove, removeAttributeNode, replaceWith } from "./utils.ts";
+import { format } from "./deps.ts";
 
 export function applyPatch(root: Node, patches: Iterable<Patch>): void {
   for (const patch of patches) {
@@ -44,13 +45,11 @@ export function applyPatch(root: Node, patches: Iterable<Patch>): void {
 function applySubstitutePatch(root: Node, patch: SubstitutePatch): void {
   const node = resolvePaths(root, patch.paths);
 
-  if (!node) throw new Error("target node does not exist");
+  if (!node) throw new Error(Msg.notExist(Name.TargetNode));
 
   if (patch.isAttr()) {
     if (node instanceof Attr) {
-      if (!node.ownerElement) {
-        throw new Error("owner element does not exist");
-      }
+      if (!node.ownerElement) throw new Error(Msg.notExist(Name.OwnerElement));
 
       node.ownerElement.setAttributeNS(
         patch.new.namespaceURI,
@@ -63,7 +62,7 @@ function applySubstitutePatch(root: Node, patch: SubstitutePatch): void {
 
   const result = replaceWith(patch.new, node);
 
-  if (!result) throw new Error("fail to replace node");
+  if (!result) throw new Error(Msg.fail("replace node"));
 }
 
 export function applyAdditionPatch(root: Node, patch: AdditionPatch): void {
@@ -84,12 +83,12 @@ export function applyAdditionPatch(root: Node, patch: AdditionPatch): void {
 export function applyDeletionPatch(root: Node, patch: DeletionPatch) {
   const node = resolvePaths(root, patch.paths);
 
-  if (!node) throw new Error("target does not exist");
+  if (!node) throw new Error(Msg.notExist(Name.TargetNode));
 
   if (node instanceof Attr) {
     const result = removeAttributeNode(node);
 
-    if (!result) throw new Error(`fail to remove ${node}`);
+    if (!result) throw new Error(Msg.fail("remove attribute node"));
     return;
   }
 
@@ -99,7 +98,7 @@ export function applyDeletionPatch(root: Node, patch: DeletionPatch) {
 export function applyInsertionPatch(root: Node, patch: InsertionPatch) {
   const node = resolvePaths(root, patch.paths);
 
-  if (!node) throw new Error("target does not exist");
+  if (!node) throw new Error(Msg.notExist(Name.TargetNode));
 
   const toPos = resolvePaths(root, patch.to);
 
@@ -109,7 +108,7 @@ export function applyInsertionPatch(root: Node, patch: InsertionPatch) {
 export function applyMovementPatch(root: Node, patch: MovementPatch) {
   const parent = resolvePaths(root, patch.paths);
 
-  if (!parent) throw new Error("parent node does not exists");
+  if (!parent) throw new Error(Msg.notExist(Name.ParentNode));
 
   const sourceNode = parent.childNodes[patch.from];
   const targetNode = parent.childNodes[patch.to];
@@ -148,3 +147,23 @@ export function resolvePaths(
 type FixedNamedNodeMap =
   & { [key in string]?: Attr }
   & NamedNodeMap;
+
+const enum Template {
+  NotExist = "{name} does not exist",
+  Fail = "fail to {what}",
+}
+
+const enum Name {
+  TargetNode = "target node",
+  OwnerElement = "owner element",
+  ParentNode = "parent node",
+}
+
+class Msg {
+  static notExist(name: string): string {
+    return format(Template.NotExist, { name });
+  }
+  static fail(what: string): string {
+    return format(Template.Fail, { what });
+  }
+}
