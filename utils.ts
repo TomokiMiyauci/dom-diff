@@ -1,3 +1,6 @@
+// Copyright © 2023 Tomoki Miyauchi. All rights reserved. MIT license.
+// This module is browser compatible.
+
 // deno-lint-ignore no-explicit-any
 export function not<T extends (...args: any) => boolean>(fn: T): T {
   const proxy = new Proxy(fn, {
