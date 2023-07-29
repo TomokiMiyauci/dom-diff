@@ -80,7 +80,7 @@ export function applyAdditionPatch(root: Node, patch: AdditionPatch): void {
   throw new Error("target is not element");
 }
 
-export function applyDeletionPatch(root: Node, patch: DeletionPatch) {
+export function applyDeletionPatch(root: Node, patch: DeletionPatch): void {
   const node = resolvePaths(root, patch.paths);
 
   if (!node) throw new Error(Msg.notExist(Name.TargetNode));
@@ -95,7 +95,7 @@ export function applyDeletionPatch(root: Node, patch: DeletionPatch) {
   remove(node);
 }
 
-export function applyInsertionPatch(root: Node, patch: InsertionPatch) {
+export function applyInsertionPatch(root: Node, patch: InsertionPatch): void {
   const node = resolvePaths(root, patch.paths);
 
   if (!node) throw new Error(Msg.notExist(Name.TargetNode));
@@ -105,7 +105,7 @@ export function applyInsertionPatch(root: Node, patch: InsertionPatch) {
   node.insertBefore(patch.node, toPos ?? null);
 }
 
-export function applyMovementPatch(root: Node, patch: MovementPatch) {
+export function applyMovementPatch(root: Node, patch: MovementPatch): void {
   const parent = resolvePaths(root, patch.paths);
 
   if (!parent) throw new Error(Msg.notExist(Name.ParentNode));
