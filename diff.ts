@@ -60,7 +60,7 @@ export class InsertionPatch extends BasePatch {
   }
 }
 
-export interface AddPatch extends BasePatch {
+export interface AdditionPatch extends BasePatch {
   type: PatchType.Add;
   node: Attr;
 }
@@ -82,7 +82,7 @@ export interface MovementPatch {
 
 export type Patch<T = Node> =
   | SubstitutePatch<T>
-  | AddPatch
+  | AdditionPatch
   | DeletionPatch
   | MovementPatch
   | InsertionPatch;
@@ -97,7 +97,7 @@ export function diff(
   paths: Path[] = [],
   differ: Differ = defaultDiffer,
 ): Patch[] {
-  if (oldNode.isEqualNode(newNode)) return [];
+  if (oldNode === newNode) return [];
 
   if (oldNode.nodeType !== newNode.nodeType) {
     return [new SubstitutePatch(paths, oldNode, newNode)];
@@ -218,7 +218,10 @@ export function diffChildren(
 ): Patch[] {
   const oldNodes = Array.from(oldNode);
   const newNodes = Array.from(newNode);
-  const patches = diffList(oldNodes, newNodes, toKey);
+  const patches = diffList(oldNodes, newNodes, {
+    keying: toKey,
+    substitutable: false,
+  });
   const sequentialDifferences = patches.map((patch) => toPatch(patch, paths));
   const reorderedNodes = patches.reduce((acc, patch) => {
     switch (patch.type) {
@@ -234,6 +237,12 @@ export function diffChildren(
       }
       case ListPatchType.Remove: {
         acc.splice(patch.index, 1);
+
+        return acc;
+      }
+
+      case ListPatchType.Substitute: {
+        acc.splice(patch.index, 1, patch.to.item);
 
         return acc;
       }
@@ -254,7 +263,7 @@ function toKey(node: ChildNode): string {
 function toPatch<T extends Node>(
   patch: ListPatch<T>,
   paths: Path[],
-): InsertionPatch | MovementPatch | DeletionPatch {
+): InsertionPatch | MovementPatch | DeletionPatch | SubstitutePatch<T> {
   switch (patch.type) {
     case ListPatchType.Insert: {
       return new InsertionPatch(paths, paths.concat(patch.index), patch.item);
@@ -272,6 +281,13 @@ function toPatch<T extends Node>(
         type: PatchType.Delete,
         paths: paths.concat(patch.index),
       };
+    }
+    case ListPatchType.Substitute: {
+      return new SubstitutePatch(
+        paths.concat(patch.index),
+        patch.from.item,
+        patch.to.item,
+      );
     }
   }
 }

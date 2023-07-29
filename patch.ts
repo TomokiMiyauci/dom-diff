@@ -48,14 +48,14 @@ function applySubstitutePatch(root: Node, patch: SubstitutePatch): void {
       if (!node.ownerElement) {
         throw new Error("owner element does not exist");
       }
+
       node.ownerElement.setAttributeNS(
         patch.new.namespaceURI,
         patch.new.name,
         patch.new.value,
       );
+      return;
     }
-
-    throw new Error("invalid target node");
   }
 
   const result = replaceWith(patch.new, node);
