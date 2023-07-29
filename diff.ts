@@ -3,7 +3,7 @@
 
 /// <reference lib="dom" />
 
-import { distinct, enumerate, zip } from "./deps.ts";
+import { distinct, enumerate, papplyRest, zip } from "./deps.ts";
 import {
   diff as diffList,
   Patch as ListPatch,
@@ -12,12 +12,13 @@ import {
 import { not } from "./utils.ts";
 import type { Path } from "./types.ts";
 
-export interface DeletionPatch extends Position {
-  type: PatchType.Delete;
+export interface Position {
+  /** Absolute path to target. */
+  paths: readonly Path[];
 }
 
-interface Position {
-  paths: readonly Path[];
+export interface DeletionPatch extends Position {
+  type: PatchType.Delete;
 }
 
 interface BasePatch extends Position {
@@ -122,24 +123,15 @@ function* defaultDiffer(
   differ: Differ,
 ): Iterable<Patch> {
   if (oldNode instanceof Element && newNode instanceof Element) {
-    const parentDiff = diffElement(oldNode, newNode, paths);
-
-    yield* parentDiff;
-
-    if (oldNode.hasChildNodes() || newNode.hasChildNodes()) {
-      yield* diffChildren(
-        oldNode.childNodes,
-        newNode.childNodes,
-        paths,
-        differ,
-      );
-    }
-
-    return;
+    yield* diffElement(oldNode, newNode, paths);
   }
 
   if (oldNode instanceof CharacterData && newNode instanceof CharacterData) {
-    return yield* diffCharacterData(oldNode, newNode, paths);
+    yield* diffCharacterData(oldNode, newNode, paths);
+  }
+
+  if (oldNode.hasChildNodes() || newNode.hasChildNodes()) {
+    yield* diffChildren(oldNode.childNodes, newNode.childNodes, paths, differ);
   }
 }
 
@@ -152,9 +144,7 @@ export function* diffElement(
     return yield new SubstitutePatch(paths, oldNode, newNode);
   }
 
-  const attributeDifferences = diffAttribute(oldNode, newNode, paths);
-
-  return attributeDifferences;
+  yield* diffAttribute(oldNode, newNode, paths);
 }
 
 export function* diffCharacterData(
@@ -162,9 +152,16 @@ export function* diffCharacterData(
   newNode: CharacterData,
   paths: readonly Path[],
 ): Iterable<SubstitutePatch<CharacterData>> {
-  if (oldNode.data === newNode.data) return;
+  if (equalsCharacterData(oldNode, newNode)) return;
 
-  return yield new SubstitutePatch(paths, oldNode, newNode);
+  yield new SubstitutePatch(paths, oldNode, newNode);
+}
+
+export function equalsCharacterData(
+  left: CharacterData,
+  right: CharacterData,
+): boolean {
+  return left.data === right.data;
 }
 
 export function* diffAttribute(
@@ -208,7 +205,7 @@ export function* diffAttribute(
     );
   }
 
-  return yield* allAttributeNames
+  yield* allAttributeNames
     .filter(not(equalsAttribute))
     .map(diffAttr);
 }
@@ -221,45 +218,45 @@ export function* diffChildren(
 ): IterableIterator<Patch> {
   const oldNodes = Array.from(oldNode);
   const newNodes = Array.from(newNode);
-  const patches = diffList(oldNodes, newNodes, {
-    keying: toKey,
-    substitutable: false,
-  });
-  const sequentialDifferences = patches.map((patch) => toPatch(patch, paths));
+  const patches = diffList(oldNodes, newNodes, { keying: toKey });
+  const $toPatch = papplyRest(toPatch, paths);
 
-  yield* sequentialDifferences;
+  yield* patches.map($toPatch);
 
-  const reorderedNodes = patches.reduce((acc, patch) => {
-    switch (patch.type) {
-      case ListPatchType.Insert: {
-        acc.splice(patch.index, 0, patch.item);
-        return acc;
-      }
-      case ListPatchType.Move: {
-        const items = acc.splice(patch.from, 1);
-        acc.splice(patch.to, 0, ...items);
-
-        return acc;
-      }
-      case ListPatchType.Remove: {
-        acc.splice(patch.index, 1);
-
-        return acc;
-      }
-
-      case ListPatchType.Substitute: {
-        acc.splice(patch.index, 1, patch.to.item);
-
-        return acc;
-      }
-    }
-  }, oldNodes.slice());
+  const reorderedOldNodes = patches.reduce(patchArray, oldNodes.slice());
+  const reorderedOldNodesAndNewNodes = zip(reorderedOldNodes, newNodes);
 
   for (
-    const [index, [oldNode, newNode]] of enumerate(
-      zip(reorderedNodes, newNodes),
-    )
+    const [index, [oldNode, newNode]] of enumerate(reorderedOldNodesAndNewNodes)
   ) yield* differ(oldNode, newNode, paths.concat(index), differ);
+}
+
+function patchArray<T>(array: T[], patch: ListPatch<T>): T[] {
+  switch (patch.type) {
+    case ListPatchType.Insert: {
+      array.splice(patch.index, 0, patch.item);
+      return array;
+    }
+
+    case ListPatchType.Move: {
+      const items = array.splice(patch.from, 1);
+      array.splice(patch.to, 0, ...items);
+
+      return array;
+    }
+
+    case ListPatchType.Remove: {
+      array.splice(patch.index, 1);
+
+      return array;
+    }
+
+    case ListPatchType.Substitute: {
+      array.splice(patch.index, 1, patch.to.item);
+
+      return array;
+    }
+  }
 }
 
 function toKey(node: ChildNode): string {
