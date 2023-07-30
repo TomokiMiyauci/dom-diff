@@ -42,21 +42,10 @@ export function* diff(
   }
 
   yield* differ(oldNode, newNode, paths);
-
-  if (oldNode.hasChildNodes() || newNode.hasChildNodes()) {
-    yield* diffChildren(oldNode.childNodes, newNode.childNodes, {
-      paths,
-      differ: _diff,
-    });
-  }
-
-  function* _diff(
-    oldNode: Node,
-    newNode: Node,
-    paths: readonly Path[],
-  ): Iterable<Patch> {
-    yield* diff(oldNode, newNode, { paths, differ });
-  }
+  yield* diffChildren(oldNode.childNodes, newNode.childNodes, {
+    paths,
+    differ,
+  });
 }
 
 export function* diffChildren(
@@ -76,7 +65,7 @@ export function* diffChildren(
 
   for (
     const [index, [oldNode, newNode]] of enumerate(reorderedOldNodesAndNewNodes)
-  ) yield* differ(oldNode, newNode, paths.concat(index));
+  ) yield* diff(oldNode, newNode, { paths: paths.concat(index), differ });
 }
 
 function patchArray<T>(array: T[], patch: ListPatch<T>): T[] {
