@@ -7,22 +7,15 @@ import { AttributeTarget, ChildData, EventHandlerTarget } from "./target.ts";
 import { replaceWith } from "./utils.ts";
 import { CharacterDataLike, ElementLike } from "./types.ts";
 
-export interface Sync<T> {
-  add?: (node: Node, target: T) => void;
-  delete?: (node: Node, target: T) => void;
-  substitute?: (node: Node, to: T, from: T) => void;
-  move?: (node: Node, to: number, from: number) => void;
-}
-
-export const eventHandlerSync: Sync<EventHandlerTarget> = {
-  add: (node, target) => {
+export const eventHandlerSync = {
+  add: (node: Node, target: EventHandlerTarget): void => {
     Reflect.set(node, target.name, target.handler);
   },
-  delete: (node, target) => {
+  delete: (node: Node, target: EventHandlerTarget): void => {
     Reflect.set(node, target.name, null);
   },
-  substitute: (node, target) => {
-    Reflect.set(node, target.name, target.handler);
+  substitute: (node: Node, { to }: { to: EventHandlerTarget }): void => {
+    Reflect.set(node, to.name, to.handler);
   },
 };
 
