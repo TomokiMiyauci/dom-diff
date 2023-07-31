@@ -1,0 +1,21 @@
+{
+  "title": "Node dependency API",
+  "description": "Dependency list of Node and Node derivation API in whole project.",
+  "dependencies": {
+    "Element": [
+      "hasAttribute",
+      "getAttribute",
+      "attributes",
+      "getAttributeNames",
+      "getAttributeNode",
+      "setAttribute",
+      "removeAttribute"
+    ],
+    "CharacterData": ["data"]
+  },
+  "output": {
+    "title": "The output type name format",
+    "description": "This field used by tools.",
+    "value": "{name}Dep"
+  }
+}

@@ -1,5 +1,3 @@
-export type CharacterDataDep = "data";
-
 export type ElementDep =
   | "hasAttribute"
   | "getAttribute"
@@ -8,3 +6,5 @@ export type ElementDep =
   | "getAttributeNode"
   | "setAttribute"
   | "removeAttribute";
+
+export type CharacterDataDep = "data";
