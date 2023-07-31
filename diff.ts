@@ -21,8 +21,8 @@ import {
 } from "./types.ts";
 import { ChildData, TargetType } from "./target.ts";
 
-export interface DiffOptions<R extends Patch> {
-  differs?: Differ<R>[];
+export interface DiffOptions<T extends Patch> {
+  differ?: Differ<T>;
 
   /**
    * @default []
@@ -30,14 +30,14 @@ export interface DiffOptions<R extends Patch> {
   paths?: readonly number[];
 }
 
-export function* diff<P extends Patch = never>(
+export function* diff<T extends Patch = never>(
   oldNode: Node,
   newNode: Node,
-  { paths = [], differs = [] }: DiffOptions<P> = {},
+  { paths = [], differ }: DiffOptions<T> = {},
 ): Iterable<
   & Position
   & (
-    | P
+    | T
     | AdditionPatch<TargetType.Children, ChildData>
     | SubstitutePatch<TargetType.Children, ChildData>
     | DeletionPatch<TargetType.Children, ChildData>
@@ -56,7 +56,7 @@ export function* diff<P extends Patch = never>(
     };
   }
 
-  for (const differ of differs) {
+  if (differ) {
     const iter = differ(oldNode, newNode);
 
     yield* imap(
@@ -67,14 +67,14 @@ export function* diff<P extends Patch = never>(
 
   yield* diffChildren(oldNode.childNodes, newNode.childNodes, {
     paths,
-    differs,
+    differ,
   });
 }
 
 export function* diffChildren<P extends Patch = never>(
   oldNode: NodeListOf<ChildNode>,
   newNode: NodeListOf<ChildNode>,
-  { paths = [], differs = [] }: DiffOptions<P>,
+  { paths = [], differ }: DiffOptions<P>,
 ): Iterable<
   & Position
   & (
@@ -98,7 +98,7 @@ export function* diffChildren<P extends Patch = never>(
 
   for (
     const [index, [oldNode, newNode]] of enumerate(reorderedOldNodesAndNewNodes)
-  ) yield* diff(oldNode, newNode, { paths: paths.concat(index), differs });
+  ) yield* diff(oldNode, newNode, { paths: paths.concat(index), differ });
 }
 
 function patchArray<T>(array: T[], patch: ListPatch<T>): T[] {
