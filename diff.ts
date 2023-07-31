@@ -3,62 +3,95 @@
 
 /// <reference lib="dom" />
 
-import { enumerate, papplyRest, zip } from "./deps.ts";
+import { enumerate, imap, papplyRest, zip } from "./deps.ts";
 import {
   diff as diffList,
   Patch as ListPatch,
   PatchType as ListPatchType,
 } from "../list-diff/diff.ts";
 import {
+  AdditionPatch,
   DeletionPatch,
   Differ,
-  InsertionPatch,
   MovementPatch,
   Patch,
   PatchType,
-  Path,
+  Position,
   SubstitutePatch,
 } from "./types.ts";
-import { markupDiffer } from "./differ.ts";
+import { ChildData, TargetType } from "./target.ts";
 
-export interface DiffOptions {
-  differ: Differ;
+export interface DiffOptions<R extends Patch> {
+  differ: Differ<R>;
 
   /**
    * @default []
    */
-  paths: readonly Path[];
+  paths?: readonly number[];
 }
 
-export function* diff(
+export function* diff<
+  P extends Patch,
+>(
   oldNode: Node,
   newNode: Node,
-  { paths = [], differ = markupDiffer }: Partial<DiffOptions> = {},
-): Iterable<Patch> {
+  options: DiffOptions<P>,
+): Iterable<
+  & Position
+  & (
+    | P
+    | AdditionPatch<TargetType.Children, ChildData>
+    | SubstitutePatch<TargetType.Children, ChildData>
+    | DeletionPatch<TargetType.Children, ChildData>
+    | MovementPatch<TargetType.Children>
+    | SubstitutePatch<TargetType.Node, Node>
+  )
+> {
   if (oldNode === newNode) return;
 
+  const paths = options.paths ?? [];
+
   if (oldNode.nodeName !== newNode.nodeName) {
-    return yield new SubstitutePatch(paths, oldNode, newNode);
+    return yield {
+      type: PatchType.Substitute,
+      valueType: TargetType.Node,
+      paths,
+      value: { from: oldNode, to: newNode },
+    };
   }
 
-  yield* differ(oldNode, newNode, paths);
+  yield* imap(
+    options.differ(oldNode, newNode),
+    (value) => ({ ...value, paths }),
+  );
+
   yield* diffChildren(oldNode.childNodes, newNode.childNodes, {
     paths,
-    differ,
+    differ: options.differ,
   });
 }
 
-export function* diffChildren(
+export function* diffChildren<P extends Patch>(
   oldNode: NodeListOf<ChildNode>,
   newNode: NodeListOf<ChildNode>,
-  { paths = [], differ }: DiffOptions,
-): IterableIterator<Patch> {
+  { paths = [], differ }: DiffOptions<P>,
+): Iterable<
+  & Position
+  & (
+    | P
+    | AdditionPatch<TargetType.Children, ChildData>
+    | SubstitutePatch<TargetType.Children, ChildData>
+    | DeletionPatch<TargetType.Children, ChildData>
+    | MovementPatch<TargetType.Children>
+    | SubstitutePatch<TargetType.Node, Node>
+  )
+> {
   const oldNodes = Array.from(oldNode);
   const newNodes = Array.from(newNode);
   const patches = diffList(oldNodes, newNodes, { keying: toKey });
-  const $toPatch = papplyRest(toPatch, paths);
+  const $toPatch = papplyRest(toPatch);
 
-  yield* patches.map($toPatch);
+  yield* patches.map($toPatch).map((value) => ({ ...value, paths }));
 
   const reorderedOldNodes = patches.reduce(patchArray, oldNodes.slice());
   const reorderedOldNodesAndNewNodes = zip(reorderedOldNodes, newNodes);
@@ -100,34 +133,59 @@ function toKey(node: ChildNode): string {
   return node.nodeName;
 }
 
-function toPatch<T extends Node>(
-  patch: ListPatch<T>,
-  paths: readonly Path[],
-): InsertionPatch | MovementPatch | DeletionPatch | SubstitutePatch<T> {
+function toPatch(
+  patch: ListPatch<Node>,
+):
+  | AdditionPatch<TargetType.Children, ChildData>
+  | SubstitutePatch<TargetType.Children, ChildData>
+  | DeletionPatch<TargetType.Children, ChildData>
+  | MovementPatch<TargetType.Children> {
   switch (patch.type) {
     case ListPatchType.Insert: {
-      return new InsertionPatch(paths, paths.concat(patch.index), patch.item);
+      return {
+        type: PatchType.Add,
+        valueType: TargetType.Children,
+        value: {
+          pos: patch.index,
+          node: patch.item,
+        },
+      };
     }
     case ListPatchType.Move: {
       return {
         type: PatchType.Move,
-        paths,
-        from: patch.from,
-        to: patch.to,
+        valueType: TargetType.Children,
+        value: {
+          from: patch.from,
+          to: patch.to,
+        },
       };
     }
     case ListPatchType.Remove: {
       return {
         type: PatchType.Delete,
-        paths: paths.concat(patch.index),
+        valueType: TargetType.Children,
+        value: {
+          pos: patch.index,
+          node: patch.item,
+        },
       };
     }
     case ListPatchType.Substitute: {
-      return new SubstitutePatch(
-        paths.concat(patch.index),
-        patch.from.item,
-        patch.to.item,
-      );
+      return {
+        type: PatchType.Substitute,
+        valueType: TargetType.Children,
+        value: {
+          from: {
+            pos: patch.index,
+            node: patch.from.item,
+          },
+          to: {
+            pos: patch.index,
+            node: patch.to.item,
+          },
+        },
+      };
     }
   }
 }

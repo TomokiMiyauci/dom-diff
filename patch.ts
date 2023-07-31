@@ -3,127 +3,33 @@
 
 /// <reference lib="dom" />
 
-import {
-  AdditionPatch,
-  DeletionPatch,
-  InsertionPatch,
-  MovementPatch,
-  Patch,
-  PatchType,
-  SubstitutePatch,
-} from "./diff.ts";
-import {
-  remove,
-  removeAttributeNode,
-  replaceWith,
-  resolvePaths,
-} from "./utils.ts";
+import { Patch, Position } from "./types.ts";
+import { resolvePaths } from "./utils.ts";
 import { format } from "./deps.ts";
 
-export function applyPatch(root: Node, patches: Iterable<Patch>): void {
+export function apply<T extends Patch>(
+  root: Node,
+  patches: Iterable<T & Position>,
+  sync: {
+    [k in T["valueType"]]: {
+      [i in Extract<T, { valueType: k }>["type"]]: (
+        node: Node,
+        data: Extract<Extract<T, { valueType: k }>, { type: i }>["value"],
+      ) => void;
+    };
+  },
+): void {
   for (const patch of patches) {
-    switch (patch.type) {
-      case PatchType.Substitute:
-        applySubstitutePatch(root, patch);
-        break;
+    const node = resolvePaths(root, patch.paths);
 
-      case PatchType.Add:
-        applyAdditionPatch(root, patch);
-        break;
+    if (!node) throw new Error(Msg.notExist(Name.TargetNode));
 
-      case PatchType.Delete:
-        applyDeletionPatch(root, patch);
-        break;
-
-      case PatchType.Insert:
-        applyInsertionPatch(root, patch);
-        break;
-
-      case PatchType.Move:
-        applyMovementPatch(root, patch);
-        break;
-    }
-  }
-}
-
-function applySubstitutePatch(root: Node, patch: SubstitutePatch): void {
-  const node = resolvePaths(root, patch.paths);
-
-  if (!node) throw new Error(Msg.notExist(Name.TargetNode));
-
-  if (patch.isAttr()) {
-    if (node instanceof Attr) {
-      if (!node.ownerElement) throw new Error(Msg.notExist(Name.OwnerElement));
-
-      node.ownerElement.setAttributeNS(
-        patch.new.namespaceURI,
-        patch.new.name,
-        patch.new.value,
+    sync[patch.valueType as T["valueType"]]
+      [patch.type as Extract<T, { valueType: string }>["type"]](
+        node,
+        patch.value,
       );
-      return;
-    }
   }
-
-  const result = replaceWith(patch.new, node);
-
-  if (!result) throw new Error(Msg.fail("replace node"));
-}
-
-export function applyAdditionPatch(root: Node, patch: AdditionPatch): void {
-  const node = resolvePaths(root, patch.paths);
-
-  if (node instanceof Element) {
-    node.setAttributeNS(
-      patch.node.namespaceURI,
-      patch.node.name,
-      patch.node.value,
-    );
-    return;
-  }
-
-  throw new Error("target is not element");
-}
-
-export function applyDeletionPatch(root: Node, patch: DeletionPatch): void {
-  const node = resolvePaths(root, patch.paths);
-
-  if (!node) throw new Error(Msg.notExist(Name.TargetNode));
-
-  if (node instanceof Attr) {
-    const result = removeAttributeNode(node);
-
-    if (!result) throw new Error(Msg.fail("remove attribute node"));
-    return;
-  }
-
-  remove(node);
-}
-
-export function applyInsertionPatch(root: Node, patch: InsertionPatch): void {
-  const node = resolvePaths(root, patch.paths);
-
-  if (!node) throw new Error(Msg.notExist(Name.TargetNode));
-
-  const toPos = resolvePaths(root, patch.to);
-
-  node.insertBefore(patch.node, toPos ?? null);
-}
-
-export function applyMovementPatch(root: Node, patch: MovementPatch): void {
-  const parent = resolvePaths(root, patch.paths);
-
-  if (!parent) throw new Error(Msg.notExist(Name.ParentNode));
-
-  const sourceNode = parent.childNodes[patch.from];
-  const targetNode = parent.childNodes[patch.to];
-  const isLeft2Right = patch.from < patch.to;
-
-  if (isLeft2Right) {
-    parent.insertBefore(sourceNode, targetNode.nextSibling);
-    return;
-  }
-
-  parent.insertBefore(sourceNode, targetNode);
 }
 
 const enum Template {

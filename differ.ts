@@ -5,38 +5,116 @@
 
 import { distinct } from "./deps.ts";
 import { not } from "./utils.ts";
-import { Patch, PatchType, Path, SubstitutePatch } from "./types.ts";
+import {
+  AdditionPatch,
+  DeletionPatch,
+  EventHandlerName,
+  PatchType,
+  SubstitutePatch,
+} from "./types.ts";
+import { AttributeTarget, EventHandlerTarget, TargetType } from "./target.ts";
 
 export function* markupDiffer(
   oldNode: Node,
   newNode: Node,
-  paths: readonly Path[],
-): Iterable<Patch> {
+): IterableIterator<
+  | AdditionPatch<TargetType.Attribute, AttributeTarget>
+  | DeletionPatch<TargetType.Attribute, AttributeTarget>
+  | SubstitutePatch<TargetType.Attribute, AttributeTarget>
+  | SubstitutePatch<TargetType.CharacterData, string>
+> {
   if (oldNode instanceof Element && newNode instanceof Element) {
-    yield* diffElement(oldNode, newNode, paths);
+    return yield* diffElement(oldNode, newNode);
   }
 
   if (oldNode instanceof CharacterData && newNode instanceof CharacterData) {
-    yield* diffCharacterData(oldNode, newNode, paths);
+    return yield* diffCharacterData(oldNode, newNode);
+  }
+}
+
+export class EventHandlerDiffer {
+  #eventNames: Set<EventHandlerName>;
+  constructor(eventNames: readonly string[]) {
+    this.#eventNames = new Set<EventHandlerName>(
+      eventNames.map((v) => `on${v}` as const),
+    );
+  }
+
+  *diff(
+    oldNode: Node,
+    newNode: Node,
+  ): IterableIterator<
+    | AdditionPatch<TargetType.EventHandler, EventHandlerTarget>
+    | DeletionPatch<TargetType.EventHandler, EventHandlerTarget>
+    | SubstitutePatch<TargetType.EventHandler, EventHandlerTarget>
+  > {
+    const filteredNames = [...this.#eventNames.values()].filter((name) =>
+      Reflect.has(oldNode, name) || Reflect.has(newNode, name)
+    );
+
+    for (const name of filteredNames) {
+      if (!Reflect.has(oldNode, name)) {
+        const newEventHandler = Reflect.get(newNode, name);
+
+        yield {
+          type: PatchType.Add,
+          valueType: TargetType.EventHandler,
+          value: { name, handler: newEventHandler },
+        };
+
+        return;
+      }
+
+      if (!Reflect.has(newNode, name)) {
+        const oldEventHandler = Reflect.get(oldNode, name);
+
+        yield {
+          type: PatchType.Delete,
+          valueType: TargetType.EventHandler,
+          value: { name, handler: oldEventHandler },
+        };
+        return;
+      }
+
+      const oldEventHandler = Reflect.get(oldNode, name);
+      const newEventHandler = Reflect.get(newNode, name);
+
+      if (oldEventHandler !== newEventHandler) {
+        yield {
+          type: PatchType.Substitute,
+          valueType: TargetType.EventHandler,
+          value: {
+            from: { name, handler: oldEventHandler },
+            to: { name, handler: newEventHandler },
+          },
+        };
+      }
+    }
   }
 }
 
 export function* diffElement(
   oldNode: Element,
   newNode: Element,
-  paths: readonly Path[],
-): Iterable<Patch> {
-  yield* diffAttribute(oldNode, newNode, paths);
+): IterableIterator<
+  | AdditionPatch<TargetType.Attribute, AttributeTarget>
+  | DeletionPatch<TargetType.Attribute, AttributeTarget>
+  | SubstitutePatch<TargetType.Attribute, AttributeTarget>
+> {
+  yield* diffAttribute(oldNode, newNode);
 }
 
 export function* diffCharacterData(
   oldNode: CharacterData,
   newNode: CharacterData,
-  paths: readonly Path[],
-): Iterable<SubstitutePatch<CharacterData>> {
+): IterableIterator<SubstitutePatch<TargetType.CharacterData, string>> {
   if (equalsCharacterData(oldNode, newNode)) return;
 
-  yield new SubstitutePatch(paths, oldNode, newNode);
+  yield {
+    type: PatchType.Substitute,
+    valueType: TargetType.CharacterData,
+    value: { from: oldNode.data, to: newNode.data },
+  };
 }
 
 export function equalsCharacterData(
@@ -49,8 +127,7 @@ export function equalsCharacterData(
 export function* diffAttribute(
   oldNode: Element,
   newNode: Element,
-  paths: readonly Path[],
-): Iterable<Patch> {
+) {
   const allAttributeNames = distinct(
     oldNode.getAttributeNames().concat(newNode.getAttributeNames()),
   );
@@ -62,29 +139,43 @@ export function* diffAttribute(
       );
   }
 
-  function diffAttr(qualifiedName: string): Patch {
+  function diffAttr(
+    qualifiedName: string,
+  ):
+    | AdditionPatch<TargetType.Attribute, AttributeTarget>
+    | DeletionPatch<TargetType.Attribute, AttributeTarget>
+    | SubstitutePatch<TargetType.Attribute, AttributeTarget> {
     if (!oldNode.hasAttribute(qualifiedName)) {
-      const node = newNode.getAttributeNode(qualifiedName)!;
+      const value = newNode.getAttribute(qualifiedName)!;
 
-      return { type: PatchType.Add, node, paths };
-    }
-
-    if (!newNode.hasAttribute(qualifiedName)) {
       return {
-        type: PatchType.Delete,
-        paths: paths.concat(qualifiedName),
+        type: PatchType.Add,
+        valueType: TargetType.Attribute,
+        value: { name: qualifiedName, value },
       };
     }
 
-    const leftAttr = oldNode.getAttributeNode(qualifiedName)!;
-    const rightAttr = newNode.getAttributeNode(qualifiedName)!;
+    if (!newNode.hasAttribute(qualifiedName)) {
+      const value = newNode.getAttribute(qualifiedName)!;
 
-    return new SubstitutePatch(
-      paths.concat(qualifiedName),
-      leftAttr,
-      rightAttr,
-      true,
-    );
+      return {
+        type: PatchType.Delete,
+        valueType: TargetType.Attribute,
+        value: { name: qualifiedName, value },
+      };
+    }
+
+    const leftAttr = oldNode.getAttribute(qualifiedName)!;
+    const rightAttr = newNode.getAttribute(qualifiedName)!;
+
+    return {
+      type: PatchType.Substitute,
+      valueType: TargetType.Attribute,
+      value: {
+        from: { name: qualifiedName, value: leftAttr },
+        to: { name: qualifiedName, value: rightAttr },
+      },
+    };
   }
 
   yield* allAttributeNames
