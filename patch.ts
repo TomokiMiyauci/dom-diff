@@ -7,7 +7,7 @@ import { Patch, Position } from "./types.ts";
 import { resolvePaths } from "./utils.ts";
 import { format } from "./deps.ts";
 
-export function apply<T extends Patch>(
+export function applyPatch<T extends Patch>(
   root: Node,
   patches: Iterable<T & Position>,
   sync: {
