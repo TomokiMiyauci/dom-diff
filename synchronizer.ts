@@ -21,7 +21,14 @@ export const eventHandlerSync: Sync<EventHandlerTarget> = {
 };
 
 export const attributeSync = {
-  add: upsertAttribute,
+  add(node: Node, data: AttributeTarget) {
+    if (node instanceof Element) {
+      node.setAttribute(data.name, data.value);
+      return;
+    }
+
+    throw new Error("target node is not element");
+  },
   delete: (node: Node, target: AttributeTarget) => {
     if (node instanceof Element) {
       node.removeAttribute(target.name);
@@ -30,17 +37,14 @@ export const attributeSync = {
 
     throw new Error("target node is not element");
   },
-  substitute: upsertAttribute,
+  substitute(node: Node, data: { to: AttributeTarget }) {
+    if (node instanceof Element) {
+      node.setAttribute(data.to.name, data.to.value);
+    }
+
+    throw new Error("target node is not element");
+  },
 };
-
-function upsertAttribute(node: Node, target: AttributeTarget): void {
-  if (node instanceof Element) {
-    node.setAttribute(target.name, target.value);
-    return;
-  }
-
-  throw new Error("target node is not element");
-}
 
 export const characterDataSync = {
   substitute: (node: Node, data: { from: string; to: string }) => {
