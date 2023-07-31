@@ -1,3 +1,8 @@
+// Copyright © 2023 Tomoki Miyauchi. All rights reserved. MIT license.
+// This module is browser compatible.
+
+/// <reference lib="dom" />
+
 import { AttributeTarget, ChildData, EventHandlerTarget } from "./target.ts";
 import { replaceWith } from "./utils.ts";
 import { CharacterDataLike, ElementLike } from "./types.ts";
