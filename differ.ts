@@ -7,7 +7,9 @@ import { distinct } from "./deps.ts";
 import { not } from "./utils.ts";
 import {
   AdditionPatch,
+  CharacterDataLike,
   DeletionPatch,
+  ElementLike,
   EventHandlerName,
   PatchType,
   SubstitutePatch,
@@ -15,19 +17,19 @@ import {
 import { AttributeTarget, EventHandlerTarget, TargetType } from "./target.ts";
 
 export function* markupDiffer(
-  oldNode: Node,
-  newNode: Node,
+  oldNode: Node | ElementLike | CharacterDataLike,
+  newNode: Node | ElementLike | CharacterDataLike,
 ): IterableIterator<
   | AdditionPatch<TargetType.Attribute, AttributeTarget>
   | DeletionPatch<TargetType.Attribute, AttributeTarget>
   | SubstitutePatch<TargetType.Attribute, AttributeTarget>
   | SubstitutePatch<TargetType.CharacterData, string>
 > {
-  if (oldNode instanceof Element && newNode instanceof Element) {
+  if ("attributes" in oldNode && "attributes" in newNode) {
     return yield* diffElement(oldNode, newNode);
   }
 
-  if (oldNode instanceof CharacterData && newNode instanceof CharacterData) {
+  if ("data" in oldNode && "data" in newNode) {
     return yield* diffCharacterData(oldNode, newNode);
   }
 }
@@ -94,8 +96,8 @@ export class EventHandlerDiffer {
 }
 
 export function* diffElement(
-  oldNode: Element,
-  newNode: Element,
+  oldNode: ElementLike,
+  newNode: ElementLike,
 ): IterableIterator<
   | AdditionPatch<TargetType.Attribute, AttributeTarget>
   | DeletionPatch<TargetType.Attribute, AttributeTarget>
@@ -105,8 +107,8 @@ export function* diffElement(
 }
 
 export function* diffCharacterData(
-  oldNode: CharacterData,
-  newNode: CharacterData,
+  oldNode: CharacterDataLike,
+  newNode: CharacterDataLike,
 ): IterableIterator<SubstitutePatch<TargetType.CharacterData, string>> {
   if (equalsCharacterData(oldNode, newNode)) return;
 
@@ -118,15 +120,15 @@ export function* diffCharacterData(
 }
 
 export function equalsCharacterData(
-  left: CharacterData,
-  right: CharacterData,
+  left: CharacterDataLike,
+  right: CharacterDataLike,
 ): boolean {
   return left.data === right.data;
 }
 
 export function* diffAttribute(
-  oldNode: Element,
-  newNode: Element,
+  oldNode: ElementLike,
+  newNode: ElementLike,
 ) {
   const allAttributeNames = distinct(
     oldNode.getAttributeNames().concat(newNode.getAttributeNames()),

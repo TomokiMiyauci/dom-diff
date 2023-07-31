@@ -1,5 +1,6 @@
 import { AttributeTarget, ChildData, EventHandlerTarget } from "./target.ts";
 import { replaceWith } from "./utils.ts";
+import { CharacterDataLike, ElementLike } from "./types.ts";
 
 export interface Sync<T> {
   add?: (node: Node, target: T) => void;
@@ -21,25 +22,26 @@ export const eventHandlerSync: Sync<EventHandlerTarget> = {
 };
 
 export const attributeSync = {
-  add(node: Node, data: AttributeTarget) {
-    if (node instanceof Element) {
+  add(node: Node | ElementLike, data: AttributeTarget) {
+    if ("setAttribute" in node) {
       node.setAttribute(data.name, data.value);
       return;
     }
 
     throw new Error("target node is not element");
   },
-  delete: (node: Node, target: AttributeTarget) => {
-    if (node instanceof Element) {
+  delete: (node: Node | ElementLike, target: AttributeTarget) => {
+    if ("removeAttribute" in node) {
       node.removeAttribute(target.name);
       return;
     }
 
     throw new Error("target node is not element");
   },
-  substitute(node: Node, data: { to: AttributeTarget }) {
-    if (node instanceof Element) {
+  substitute(node: Node | ElementLike, data: { to: AttributeTarget }) {
+    if ("setAttribute" in node) {
       node.setAttribute(data.to.name, data.to.value);
+      return;
     }
 
     throw new Error("target node is not element");
@@ -47,8 +49,11 @@ export const attributeSync = {
 };
 
 export const characterDataSync = {
-  substitute: (node: Node, data: { from: string; to: string }) => {
-    if (node instanceof CharacterData) {
+  substitute: (
+    node: Node | CharacterDataLike,
+    data: { from: string; to: string },
+  ) => {
+    if ("data" in node) {
       node.data = data.to;
       return;
     }
