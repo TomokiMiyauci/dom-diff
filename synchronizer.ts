@@ -7,20 +7,39 @@ import { AttributeTarget, ChildData, EventHandlerTarget } from "./target.ts";
 import { replaceWith } from "./utils.ts";
 import { CharacterDataLike, ElementLike } from "./types.ts";
 
-export const eventHandlerSync = {
-  add: (node: Node, target: EventHandlerTarget): void => {
+export interface AddSync<T, N = Node> {
+  add: (node: N, data: T) => void;
+}
+
+export interface DeleteSync<T, N = Node> {
+  delete: (node: N, data: T) => void;
+}
+
+export interface SubstituteSync<T, N = Node> {
+  substitute: (node: N, to: T, from: T) => void;
+}
+
+export interface MoveSync<N = Node> {
+  move: (node: N, to: number, from: number) => void;
+}
+
+export interface EditSync<T, N = Node>
+  extends AddSync<T, N>, DeleteSync<T, N>, SubstituteSync<T, N> {}
+
+export const eventHandlerSync: EditSync<EventHandlerTarget> = {
+  add: (node, target): void => {
     Reflect.set(node, target.name, target.handler);
   },
-  delete: (node: Node, target: EventHandlerTarget): void => {
+  delete: (node, target): void => {
     Reflect.set(node, target.name, null);
   },
-  substitute: (node: Node, { to }: { to: EventHandlerTarget }): void => {
+  substitute: (node, to): void => {
     Reflect.set(node, to.name, to.handler);
   },
 };
 
-export const attributeSync = {
-  add(node: Node | ElementLike, data: AttributeTarget) {
+export const attributeSync: EditSync<AttributeTarget, Node | ElementLike> = {
+  add(node, data) {
     if ("setAttribute" in node) {
       node.setAttribute(data.name, data.value);
       return;
@@ -28,7 +47,7 @@ export const attributeSync = {
 
     throw new Error("target node is not element");
   },
-  delete: (node: Node | ElementLike, target: AttributeTarget) => {
+  delete: (node, target) => {
     if ("removeAttribute" in node) {
       node.removeAttribute(target.name);
       return;
@@ -36,9 +55,9 @@ export const attributeSync = {
 
     throw new Error("target node is not element");
   },
-  substitute(node: Node | ElementLike, data: { to: AttributeTarget }) {
+  substitute(node, to) {
     if ("setAttribute" in node) {
-      node.setAttribute(data.to.name, data.to.value);
+      node.setAttribute(to.name, to.value);
       return;
     }
 
@@ -46,47 +65,50 @@ export const attributeSync = {
   },
 };
 
-export const characterDataSync = {
-  substitute: (
-    node: Node | CharacterDataLike,
-    data: { from: string; to: string },
-  ) => {
+export const characterDataSync: SubstituteSync<
+  string,
+  Node | CharacterDataLike
+> = {
+  substitute: (node, to) => {
     if ("data" in node) {
-      node.data = data.to;
+      node.data = to;
       return;
     }
   },
 };
 
-export const nodeSync = {
-  substitute: (target: Node, data: { to: Node }) => {
-    replaceWith(data.to, target);
+export const nodeSync: SubstituteSync<Node> = {
+  substitute: (target, to) => {
+    replaceWith(to, target);
   },
 };
 
-export const childSync = {
-  add: (node: Node, data: ChildData) => {
-    const toPos = node.childNodes[data.pos];
+export const childrenSync:
+  & AddSync<ChildData>
+  & DeleteSync<ChildData>
+  & MoveSync = {
+    add: (node, data): void => {
+      const toPos = node.childNodes[data.pos];
 
-    node.insertBefore(data.node, toPos ?? null);
-  },
-  delete: (node: Node, data: ChildData) => {
-    const child = node.childNodes[data.pos];
+      node.insertBefore(data.node, toPos ?? null);
+    },
+    delete: (node, data): void => {
+      const child = node.childNodes[data.pos];
 
-    if (!child) throw new Error("fail to remove target node");
+      if (!child) throw new Error("fail to remove target node");
 
-    child.remove();
-  },
-  move(parent: Node, { from, to }: { from: number; to: number }) {
-    const sourceNode = parent.childNodes[from];
-    const targetNode = parent.childNodes[to];
-    const isLeft2Right = from < to;
+      child.remove();
+    },
+    move(parent, to, from): void {
+      const sourceNode = parent.childNodes[from];
+      const targetNode = parent.childNodes[to];
+      const isLeft2Right = from < to;
 
-    if (isLeft2Right) {
-      parent.insertBefore(sourceNode, targetNode.nextSibling);
-      return;
-    }
+      if (isLeft2Right) {
+        parent.insertBefore(sourceNode, targetNode.nextSibling);
+        return;
+      }
 
-    parent.insertBefore(sourceNode, targetNode);
-  },
-};
+      parent.insertBefore(sourceNode, targetNode);
+    },
+  };

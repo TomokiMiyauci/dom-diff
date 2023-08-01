@@ -13,7 +13,6 @@ import {
 import {
   AdditionPatch,
   DeletionPatch,
-  Differ,
   MovementPatch,
   Patch,
   PatchType,
@@ -22,8 +21,8 @@ import {
 } from "./types.ts";
 import { ChildData, TargetType } from "./target.ts";
 
-export interface DiffOptions<T extends Patch> {
-  differ?: Differ<T>;
+export interface DiffOptions<T extends Patch<PropertyKey, unknown>> {
+  differ?: (oldNode: Node, newNode: Node) => Iterable<T>;
 
   /**
    * @default []
@@ -31,7 +30,7 @@ export interface DiffOptions<T extends Patch> {
   paths?: readonly number[];
 }
 
-export function* diff<T extends Patch = never>(
+export function* diff<T extends Patch<PropertyKey, unknown> = never>(
   oldNode: Node,
   newNode: Node,
   { paths = [], differ }: DiffOptions<T> = {},
@@ -50,9 +49,8 @@ export function* diff<T extends Patch = never>(
   if (oldNode.nodeName !== newNode.nodeName) {
     return yield {
       type: PatchType.Substitute,
-      valueType: TargetType.Node,
       paths,
-      value: { from: oldNode, to: newNode },
+      value: { type: TargetType.Node, from: oldNode, to: newNode },
     };
   }
 
@@ -71,14 +69,14 @@ export function* diff<T extends Patch = never>(
   });
 }
 
-export function* diffChildren<P extends Patch = never>(
+export function* diffChildren<T extends Patch<PropertyKey, unknown> = never>(
   oldNode: Iterable<Node>,
   newNode: Iterable<Node>,
-  { paths = [], differ }: DiffOptions<P> = {},
+  { paths = [], differ }: DiffOptions<T> = {},
 ): Iterable<
   & Position
   & (
-    | P
+    | T
     | AdditionPatch<TargetType.Children, ChildData>
     | DeletionPatch<TargetType.Children, ChildData>
     | MovementPatch<TargetType.Children>
@@ -148,24 +146,30 @@ function toPatch(
       return {
         type: PatchType.Add,
         paths,
-        valueType: TargetType.Children,
-        value: { pos: patch.index, node: patch.item },
+        value: {
+          type: TargetType.Children,
+          value: { pos: patch.index, node: patch.item },
+        },
       };
     }
     case ListPatchType.Move: {
       return {
         type: PatchType.Move,
         paths,
-        valueType: TargetType.Children,
-        value: { from: patch.from, to: patch.to },
+        value: { type: TargetType.Children, from: patch.from, to: patch.to },
       };
     }
     case ListPatchType.Remove: {
       return {
         type: PatchType.Delete,
         paths,
-        valueType: TargetType.Children,
-        value: { pos: patch.index, node: patch.item },
+        value: {
+          type: TargetType.Children,
+          value: {
+            pos: patch.index,
+            node: patch.item,
+          },
+        },
       };
     }
 
@@ -174,8 +178,8 @@ function toPatch(
       return {
         type: PatchType.Substitute,
         paths: paths.concat(patch.index),
-        valueType: TargetType.Node,
         value: {
+          type: TargetType.Node,
           from: patch.from.item,
           to: patch.to.item,
         },

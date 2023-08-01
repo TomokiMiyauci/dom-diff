@@ -3,32 +3,84 @@
 
 /// <reference lib="dom" />
 
-import { Patch, Position } from "./types.ts";
+import {
+  AdditionPatch,
+  DeletionPatch,
+  MovementPatch,
+  Patch,
+  PatchType,
+  Position,
+  SubstitutePatch,
+} from "./types.ts";
 import { resolvePaths } from "./utils.ts";
-import { format } from "./deps.ts";
+import { format, UnionToIntersection } from "./deps.ts";
+import {
+  AddSync,
+  DeleteSync,
+  MoveSync,
+  SubstituteSync,
+} from "./synchronizer.ts";
 
-export function applyPatch<T extends Patch>(
+export type PatchToSync<T extends Patch<PropertyKey, unknown>> = T extends
+  SubstitutePatch<infer K, infer V> ? {
+    [k in K]: SubstituteSync<V>;
+  }
+  : T extends AdditionPatch<infer K, infer V> ? {
+      [k in K]: AddSync<V>;
+    }
+  : T extends DeletionPatch<infer K, infer V> ? {
+      [k in K]: DeleteSync<V>;
+    }
+  : T extends MovementPatch<infer K> ? {
+      [k in K]: MoveSync;
+    }
+  : never;
+
+export function applyPatch<T extends Patch<PropertyKey, unknown>>(
   root: Node,
   patches: Iterable<T & Position>,
-  sync: {
-    [k in T["valueType"]]: {
-      [i in Extract<T, { valueType: k }>["type"]]: (
-        node: Node,
-        data: Extract<Extract<T, { valueType: k }>, { type: i }>["value"],
-      ) => void;
-    };
-  },
+  sync: UnionToIntersection<PatchToSync<T>>,
 ): void {
   for (const patch of patches) {
     const node = resolvePaths(root, patch.paths);
 
     if (!node) throw new Error(Msg.notExist(Name.TargetNode));
 
-    sync[patch.valueType as T["valueType"]]
-      [patch.type as Extract<T, { valueType: string }>["type"]](
-        node,
-        patch.value,
-      );
+    const valueType = patch.value.type;
+
+    switch (patch.type) {
+      case PatchType.Substitute: {
+        ((sync as Record<PropertyKey, SubstituteSync<unknown>>)[valueType])
+          .substitute(
+            node,
+            patch.value.to,
+            patch.value.from,
+          );
+        break;
+      }
+      case PatchType.Add: {
+        (sync as Record<PropertyKey, AddSync<unknown>>)[valueType].add(
+          node,
+          patch.value.value,
+        );
+        break;
+      }
+      case PatchType.Delete: {
+        (sync as Record<PropertyKey, DeleteSync<unknown>>)[valueType].delete(
+          node,
+          patch.value.value,
+        );
+        break;
+      }
+      case PatchType.Move: {
+        (sync as Record<PropertyKey, MoveSync>)[valueType].move(
+          node,
+          patch.value.to,
+          patch.value.from,
+        );
+        break;
+      }
+    }
   }
 }
 
