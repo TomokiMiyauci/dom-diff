@@ -71,7 +71,11 @@ export const childSync = {
     node.insertBefore(data.node, toPos ?? null);
   },
   delete: (node: Node, data: ChildData) => {
-    node.childNodes[data.pos].remove();
+    const child = node.childNodes[data.pos];
+
+    if (!child) throw new Error("fail to remove target node");
+
+    child.remove();
   },
   move(parent: Node, { from, to }: { from: number; to: number }) {
     const sourceNode = parent.childNodes[from];
@@ -84,7 +88,5 @@ export const childSync = {
     }
 
     parent.insertBefore(sourceNode, targetNode);
-  },
-  substitute(node: Node, data: { from: ChildData; to: ChildData }) {
   },
 };
