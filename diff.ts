@@ -2,6 +2,7 @@
 // This module is browser compatible.
 
 /// <reference lib="dom" />
+/// <reference lib="dom.iterable" />
 
 import { enumerate, imap, papplyRest, zip } from "./deps.ts";
 import {
@@ -39,7 +40,6 @@ export function* diff<T extends Patch = never>(
   & (
     | T
     | AdditionPatch<TargetType.Children, ChildData>
-    | SubstitutePatch<TargetType.Children, ChildData>
     | DeletionPatch<TargetType.Children, ChildData>
     | MovementPatch<TargetType.Children>
     | SubstitutePatch<TargetType.Node, Node>
@@ -72,15 +72,14 @@ export function* diff<T extends Patch = never>(
 }
 
 export function* diffChildren<P extends Patch = never>(
-  oldNode: NodeListOf<ChildNode>,
-  newNode: NodeListOf<ChildNode>,
-  { paths = [], differ }: DiffOptions<P>,
+  oldNode: Iterable<Node>,
+  newNode: Iterable<Node>,
+  { paths = [], differ }: DiffOptions<P> = {},
 ): Iterable<
   & Position
   & (
     | P
     | AdditionPatch<TargetType.Children, ChildData>
-    | SubstitutePatch<TargetType.Children, ChildData>
     | DeletionPatch<TargetType.Children, ChildData>
     | MovementPatch<TargetType.Children>
     | SubstitutePatch<TargetType.Node, Node>
@@ -89,9 +88,9 @@ export function* diffChildren<P extends Patch = never>(
   const oldNodes = Array.from(oldNode);
   const newNodes = Array.from(newNode);
   const patches = diffList(oldNodes, newNodes, { keying: toKey });
-  const $toPatch = papplyRest(toPatch);
+  const $toPatch = papplyRest(toPatch, paths);
 
-  yield* patches.map($toPatch).map((value) => ({ ...value, paths }));
+  yield* patches.map($toPatch);
 
   const reorderedOldNodes = patches.reduce(patchArray, oldNodes.slice());
   const reorderedOldNodesAndNewNodes = zip(reorderedOldNodes, newNodes);
@@ -129,61 +128,56 @@ function patchArray<T>(array: T[], patch: ListPatch<T>): T[] {
   }
 }
 
-function toKey(node: ChildNode): string {
+function toKey(node: Node): string {
   return node.nodeName;
 }
 
 function toPatch(
   patch: ListPatch<Node>,
+  paths: readonly number[],
 ):
-  | AdditionPatch<TargetType.Children, ChildData>
-  | SubstitutePatch<TargetType.Children, ChildData>
-  | DeletionPatch<TargetType.Children, ChildData>
-  | MovementPatch<TargetType.Children> {
+  & Position
+  & (
+    | AdditionPatch<TargetType.Children, ChildData>
+    | SubstitutePatch<TargetType.Node, Node>
+    | DeletionPatch<TargetType.Children, ChildData>
+    | MovementPatch<TargetType.Children>
+  ) {
   switch (patch.type) {
     case ListPatchType.Insert: {
       return {
         type: PatchType.Add,
+        paths,
         valueType: TargetType.Children,
-        value: {
-          pos: patch.index,
-          node: patch.item,
-        },
+        value: { pos: patch.index, node: patch.item },
       };
     }
     case ListPatchType.Move: {
       return {
         type: PatchType.Move,
+        paths,
         valueType: TargetType.Children,
-        value: {
-          from: patch.from,
-          to: patch.to,
-        },
+        value: { from: patch.from, to: patch.to },
       };
     }
     case ListPatchType.Remove: {
       return {
         type: PatchType.Delete,
+        paths,
         valueType: TargetType.Children,
-        value: {
-          pos: patch.index,
-          node: patch.item,
-        },
+        value: { pos: patch.index, node: patch.item },
       };
     }
+
+    // TODO(miyauci): support it
     case ListPatchType.Substitute: {
       return {
         type: PatchType.Substitute,
-        valueType: TargetType.Children,
+        paths: paths.concat(patch.index),
+        valueType: TargetType.Node,
         value: {
-          from: {
-            pos: patch.index,
-            node: patch.from.item,
-          },
-          to: {
-            pos: patch.index,
-            node: patch.to.item,
-          },
+          from: patch.from.item,
+          to: patch.to.item,
         },
       };
     }
