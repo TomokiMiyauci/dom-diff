@@ -27,11 +27,11 @@ export interface EditSync<T, N = Node>
   extends AddSync<T, N>, DeleteSync<T, N>, SubstituteSync<T, N> {}
 
 export const eventHandlerSync: EditSync<EventHandlerTarget> = {
-  add: (node, target): void => {
-    Reflect.set(node, target.name, target.handler);
+  add: (node, data): void => {
+    Reflect.set(node, data.name, data.handler);
   },
-  delete: (node, target): void => {
-    Reflect.set(node, target.name, null);
+  delete: (node, data): void => {
+    Reflect.set(node, data.name, null);
   },
   substitute: (node, to): void => {
     Reflect.set(node, to.name, to.handler);
@@ -39,29 +39,29 @@ export const eventHandlerSync: EditSync<EventHandlerTarget> = {
 };
 
 export const attributeSync: EditSync<AttributeTarget, Node | ElementLike> = {
-  add(node, data) {
+  add(node, data): void {
     if ("setAttribute" in node) {
       node.setAttribute(data.name, data.value);
       return;
     }
 
-    throw new Error("target node is not element");
+    throw new Error("target node should be element");
   },
-  delete: (node, target) => {
+  delete: (node, data): void => {
     if ("removeAttribute" in node) {
-      node.removeAttribute(target.name);
+      node.removeAttribute(data.name);
       return;
     }
 
-    throw new Error("target node is not element");
+    throw new Error("target node should be element");
   },
-  substitute(node, to) {
+  substitute(node, data): void {
     if ("setAttribute" in node) {
-      node.setAttribute(to.name, to.value);
+      node.setAttribute(data.name, data.value);
       return;
     }
 
-    throw new Error("target node is not element");
+    throw new Error("target node should be element");
   },
 };
 
@@ -92,23 +92,29 @@ export const childrenSync:
 
       node.insertBefore(data.node, toPos ?? null);
     },
-    delete: (node, data): void => {
-      const child = node.childNodes[data.pos];
+    delete: (parent, data): void => {
+      const target = parent.childNodes[data.pos];
 
-      if (!child) throw new Error("fail to remove target node");
+      if (!target) throw new Error("target node does not exist");
 
-      child.remove();
+      target.remove();
     },
     move(parent, to, from): void {
       const sourceNode = parent.childNodes[from];
+
+      if (!sourceNode) throw new Error("source node does not exist");
+
       const targetNode = parent.childNodes[to];
       const isLeft2Right = from < to;
 
       if (isLeft2Right) {
+        if (!targetNode) throw new Error("target node does not exist");
+
         parent.insertBefore(sourceNode, targetNode.nextSibling);
+
         return;
       }
 
-      parent.insertBefore(sourceNode, targetNode);
+      parent.insertBefore(sourceNode, targetNode ?? null);
     },
   };
