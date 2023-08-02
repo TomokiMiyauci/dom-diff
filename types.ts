@@ -23,25 +23,25 @@ interface FromTo<T> {
 }
 
 export interface SubstitutePatch<K extends PropertyKey, V> {
-  patchType: PatchType.Substitute;
+  patchType: `${PatchType.Substitute}`;
   dataType: K;
   data: FromTo<V>;
 }
 
 export interface DeletionPatch<K extends PropertyKey, V> {
-  patchType: PatchType.Delete;
+  patchType: `${PatchType.Delete}`;
   dataType: K;
   data: V;
 }
 
 export interface AdditionPatch<K extends PropertyKey, V> {
-  patchType: PatchType.Add;
+  patchType: `${PatchType.Add}`;
   dataType: K;
   data: V;
 }
 
 export interface MovementPatch<K extends PropertyKey> {
-  patchType: PatchType.Move;
+  patchType: `${PatchType.Move}`;
   dataType: K;
   data: FromTo<number>;
 }
