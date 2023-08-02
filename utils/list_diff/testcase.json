@@ -1,0 +1,2051 @@
+{
+  "$schema": "./testcase.schema.json",
+  "description": "diff with unique numbers",
+  "cases": [
+    { "prev": [], "new": [], "diff": {}, "patches": [], "substitutable": [] },
+    {
+      "prev": [],
+      "new": [0],
+      "diff": { "inserts": [{ "index": 0, "item": 0 }] },
+      "patches": [{ "type": "insert", "index": 0, "item": 0 }],
+      "substitutable": [{ "type": "insert", "index": 0, "item": 0 }]
+    },
+    {
+      "prev": [0],
+      "new": [],
+      "diff": { "removes": [{ "index": 0, "item": 0 }] },
+      "patches": [{ "type": "remove", "index": 0, "item": 0 }],
+      "substitutable": [{ "type": "remove", "index": 0, "item": 0 }]
+    },
+    {
+      "prev": [0],
+      "new": [0],
+      "diff": { "sames": [{ "index": 0, "oldItem": 0, "newItem": 0 }] },
+      "patches": [],
+      "substitutable": []
+    },
+    {
+      "prev": [0],
+      "new": [1],
+      "diff": {
+        "inserts": [{ "index": 0, "item": 1 }],
+        "removes": [{ "index": 0, "item": 0 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "insert", "index": 0, "item": 1 }
+      ],
+      "substitutable": [
+        {
+          "type": "substitute",
+          "index": 0,
+          "from": { "item": 0 },
+          "to": { "item": 1 }
+        }
+      ]
+    },
+    {
+      "prev": [0, 0],
+      "new": [],
+      "diff": {
+        "removes": [{ "index": 0, "item": 0 }, { "index": 1, "item": 0 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 1, "item": 0 },
+        { "type": "remove", "index": 0, "item": 0 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 1, "item": 0 },
+        { "type": "remove", "index": 0, "item": 0 }
+      ]
+    },
+    {
+      "prev": [0, 1],
+      "new": [],
+      "diff": {
+        "removes": [{ "index": 0, "item": 0 }, { "index": 1, "item": 1 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "remove", "index": 0, "item": 0 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "remove", "index": 0, "item": 0 }
+      ]
+    },
+    {
+      "prev": [],
+      "new": [0, 0],
+      "diff": {
+        "inserts": [{ "index": 0, "item": 0 }, { "index": 1, "item": 0 }]
+      },
+      "patches": [
+        { "type": "insert", "index": 0, "item": 0 },
+        { "type": "insert", "index": 1, "item": 0 }
+      ],
+      "substitutable": [
+        { "type": "insert", "index": 0, "item": 0 },
+        { "type": "insert", "index": 1, "item": 0 }
+      ]
+    },
+    {
+      "prev": [],
+      "new": [0, 1],
+      "diff": {
+        "inserts": [{ "index": 0, "item": 0 }, { "index": 1, "item": 1 }]
+      },
+      "patches": [
+        { "type": "insert", "index": 0, "item": 0 },
+        { "type": "insert", "index": 1, "item": 1 }
+      ],
+      "substitutable": [
+        { "type": "insert", "index": 0, "item": 0 },
+        { "type": "insert", "index": 1, "item": 1 }
+      ]
+    },
+    {
+      "prev": [0, 0],
+      "new": [0],
+      "diff": {
+        "removes": [{ "index": 1, "item": 0 }],
+        "sames": [{ "index": 0, "oldItem": 0, "newItem": 0 }]
+      },
+      "patches": [{ "type": "remove", "index": 1, "item": 0 }],
+      "substitutable": [{ "type": "remove", "index": 1, "item": 0 }]
+    },
+    {
+      "prev": [0, 0],
+      "new": [1],
+      "diff": {
+        "removes": [{ "index": 0, "item": 0 }, { "index": 1, "item": 0 }],
+        "inserts": [{ "index": 0, "item": 1 }],
+        "sames": []
+      },
+      "patches": [
+        { "type": "remove", "index": 1, "item": 0 },
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "insert", "index": 0, "item": 1 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 1, "item": 0 },
+        {
+          "type": "substitute",
+          "index": 0,
+          "from": { "item": 0 },
+          "to": { "item": 1 }
+        }
+      ]
+    },
+    {
+      "prev": [0, 1],
+      "new": [0],
+      "diff": {
+        "removes": [{ "index": 1, "item": 1 }],
+        "sames": [{ "index": 0, "oldItem": 0, "newItem": 0 }]
+      },
+      "patches": [{ "type": "remove", "index": 1, "item": 1 }],
+      "substitutable": [{ "type": "remove", "index": 1, "item": 1 }]
+    },
+    {
+      "prev": [0, 1],
+      "new": [1],
+      "diff": {
+        "removes": [{ "index": 0, "item": 0 }],
+        "moves": [
+          {
+            "prev": { "index": 1, "item": 1 },
+            "current": { "index": 0, "item": 1 }
+          }
+        ]
+      },
+      "patches": [{ "type": "remove", "index": 0, "item": 0 }],
+      "substitutable": [{ "type": "remove", "index": 0, "item": 0 }]
+    },
+    {
+      "prev": [1, 0],
+      "new": [0],
+      "diff": {
+        "removes": [{ "index": 0, "item": 1 }],
+        "moves": [
+          {
+            "prev": { "index": 1, "item": 0 },
+            "current": { "index": 0, "item": 0 }
+          }
+        ]
+      },
+      "patches": [{ "type": "remove", "index": 0, "item": 1 }],
+      "substitutable": [{ "type": "remove", "index": 0, "item": 1 }]
+    },
+    {
+      "prev": [1, 0],
+      "new": [1],
+      "diff": {
+        "removes": [{ "index": 1, "item": 0 }],
+        "sames": [{ "index": 0, "oldItem": 1, "newItem": 1 }]
+      },
+      "patches": [{ "type": "remove", "index": 1, "item": 0 }],
+      "substitutable": [{ "type": "remove", "index": 1, "item": 0 }]
+    },
+    {
+      "prev": [1, 1],
+      "new": [0],
+      "diff": {
+        "removes": [{ "index": 0, "item": 1 }, { "index": 1, "item": 1 }],
+        "inserts": [{ "index": 0, "item": 0 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "remove", "index": 0, "item": 1 },
+        { "type": "insert", "index": 0, "item": 0 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 1, "item": 1 },
+        {
+          "type": "substitute",
+          "index": 0,
+          "from": { "item": 1 },
+          "to": { "item": 0 }
+        }
+      ]
+    },
+    {
+      "prev": [0, 1],
+      "new": [2],
+      "diff": {
+        "removes": [{ "index": 0, "item": 0 }, { "index": 1, "item": 1 }],
+        "inserts": [{ "index": 0, "item": 2 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "insert", "index": 0, "item": 2 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 1, "item": 1 },
+        {
+          "type": "substitute",
+          "index": 0,
+          "from": { "item": 0 },
+          "to": { "item": 2 }
+        }
+      ]
+    },
+    {
+      "prev": [0],
+      "new": [0, 0],
+      "diff": {
+        "inserts": [{ "index": 1, "item": 0 }],
+        "sames": [
+          { "index": 0, "oldItem": 0, "newItem": 0 }
+        ]
+      },
+      "patches": [{ "type": "insert", "index": 1, "item": 0 }],
+      "substitutable": [{ "type": "insert", "index": 1, "item": 0 }]
+    },
+    {
+      "prev": [1],
+      "new": [0, 0],
+      "diff": {
+        "inserts": [{ "index": 0, "item": 0 }, { "index": 1, "item": 0 }],
+        "removes": [{ "index": 0, "item": 1 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 0, "item": 1 },
+        { "type": "insert", "index": 0, "item": 0 },
+        { "type": "insert", "index": 1, "item": 0 }
+      ],
+      "substitutable": [
+        {
+          "type": "substitute",
+          "index": 0,
+          "from": { "item": 1 },
+          "to": { "item": 0 }
+        },
+        { "type": "insert", "index": 1, "item": 0 }
+      ]
+    },
+    {
+      "prev": [0],
+      "new": [1, 0],
+      "diff": {
+        "inserts": [{ "index": 0, "item": 1 }],
+        "moves": [
+          {
+            "prev": { "index": 0, "item": 0 },
+            "current": { "index": 1, "item": 0 }
+          }
+        ]
+      },
+      "patches": [{ "type": "insert", "index": 0, "item": 1 }],
+      "substitutable": [{ "type": "insert", "index": 0, "item": 1 }]
+    },
+    {
+      "prev": [0],
+      "new": [0, 1],
+      "diff": {
+        "inserts": [{ "index": 1, "item": 1 }],
+        "sames": [
+          { "index": 0, "oldItem": 0, "newItem": 0 }
+        ]
+      },
+      "patches": [{ "type": "insert", "index": 1, "item": 1 }],
+      "substitutable": [{ "type": "insert", "index": 1, "item": 1 }]
+    },
+    {
+      "prev": [2],
+      "new": [0, 1],
+      "diff": {
+        "inserts": [{ "index": 0, "item": 0 }, { "index": 1, "item": 1 }],
+        "removes": [{ "index": 0, "item": 2 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 0, "item": 2 },
+        { "type": "insert", "index": 0, "item": 0 },
+        { "type": "insert", "index": 1, "item": 1 }
+      ],
+      "substitutable": [
+        {
+          "type": "substitute",
+          "index": 0,
+          "from": { "item": 2 },
+          "to": { "item": 0 }
+        },
+        { "type": "insert", "index": 1, "item": 1 }
+      ]
+    },
+    {
+      "prev": [0, 0],
+      "new": [0, 0],
+      "diff": {
+        "sames": [
+          { "index": 0, "oldItem": 0, "newItem": 0 },
+          { "index": 1, "oldItem": 0, "newItem": 0 }
+        ]
+      },
+      "patches": [],
+      "substitutable": []
+    },
+    {
+      "prev": [0, 0],
+      "new": [0, 1],
+      "diff": {
+        "inserts": [{ "index": 1, "item": 1 }],
+        "removes": [{ "index": 1, "item": 0 }],
+        "sames": [
+          { "index": 0, "oldItem": 0, "newItem": 0 }
+        ]
+      },
+      "patches": [
+        { "type": "remove", "index": 1, "item": 0 },
+        { "type": "insert", "index": 1, "item": 1 }
+      ],
+      "substitutable": [{
+        "type": "substitute",
+        "index": 1,
+        "from": { "item": 0 },
+        "to": { "item": 1 }
+      }]
+    },
+    {
+      "prev": [0, 0],
+      "new": [1, 0],
+      "diff": {
+        "inserts": [{ "index": 0, "item": 1 }],
+        "removes": [{ "index": 1, "item": 0 }],
+        "moves": [
+          {
+            "prev": { "index": 0, "item": 0 },
+            "current": { "index": 1, "item": 0 }
+          }
+        ]
+      },
+      "patches": [
+        { "type": "remove", "index": 1, "item": 0 },
+        { "type": "insert", "index": 0, "item": 1 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 1, "item": 0 },
+        { "type": "insert", "index": 0, "item": 1 }
+      ]
+    },
+    {
+      "prev": [0, 1],
+      "new": [0, 0],
+      "diff": {
+        "inserts": [{ "index": 1, "item": 0 }],
+        "removes": [{ "index": 1, "item": 1 }],
+        "sames": [{ "index": 0, "oldItem": 0, "newItem": 0 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "insert", "index": 1, "item": 0 }
+      ],
+      "substitutable": [
+        {
+          "type": "substitute",
+          "index": 1,
+          "from": { "item": 1 },
+          "to": { "item": 0 }
+        }
+      ]
+    },
+    {
+      "prev": [0, 1],
+      "new": [0, 1],
+      "diff": {
+        "sames": [
+          { "index": 0, "oldItem": 0, "newItem": 0 },
+          { "index": 1, "oldItem": 1, "newItem": 1 }
+        ]
+      },
+      "patches": [],
+      "substitutable": []
+    },
+    {
+      "prev": [0, 1],
+      "new": [1, 0],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 0, "item": 0 },
+            "current": { "index": 1, "item": 0 }
+          },
+          {
+            "prev": { "index": 1, "item": 1 },
+            "current": { "index": 0, "item": 1 }
+          }
+        ]
+      },
+      "patches": [
+        { "type": "move", "from": 0, "to": 1 }
+      ],
+      "substitutable": [{ "type": "move", "from": 0, "to": 1 }]
+    },
+    {
+      "prev": [1, 0],
+      "new": [0, 0],
+      "diff": {
+        "inserts": [{ "index": 1, "item": 0 }],
+        "removes": [{ "index": 0, "item": 1 }],
+        "moves": [
+          {
+            "prev": { "index": 1, "item": 0 },
+            "current": { "index": 0, "item": 0 }
+          }
+        ]
+      },
+      "patches": [
+        { "type": "remove", "index": 0, "item": 1 },
+        { "type": "insert", "index": 1, "item": 0 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 0, "item": 1 },
+        { "type": "insert", "index": 1, "item": 0 }
+      ]
+    },
+    {
+      "prev": [0, 0],
+      "new": [1, 2],
+      "diff": {
+        "inserts": [{ "index": 0, "item": 1 }, { "index": 1, "item": 2 }],
+        "removes": [{ "index": 0, "item": 0 }, { "index": 1, "item": 0 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 1, "item": 0 },
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "insert", "index": 0, "item": 1 },
+        { "type": "insert", "index": 1, "item": 2 }
+      ],
+      "substitutable": [
+        {
+          "type": "substitute",
+          "index": 0,
+          "from": { "item": 0 },
+          "to": { "item": 1 }
+        },
+        {
+          "type": "substitute",
+          "index": 1,
+          "from": { "item": 0 },
+          "to": { "item": 2 }
+        }
+      ]
+    },
+    {
+      "prev": [0, 1],
+      "new": [0, 2],
+      "diff": {
+        "inserts": [{ "index": 1, "item": 2 }],
+        "removes": [{ "index": 1, "item": 1 }],
+        "sames": [{ "index": 0, "oldItem": 0, "newItem": 0 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "insert", "index": 1, "item": 2 }
+      ],
+      "substitutable": [
+        {
+          "type": "substitute",
+          "index": 1,
+          "from": { "item": 1 },
+          "to": { "item": 2 }
+        }
+      ]
+    },
+    {
+      "prev": [0, 1],
+      "new": [1, 2],
+      "diff": {
+        "removes": [{ "index": 0, "item": 0 }],
+        "inserts": [{ "index": 1, "item": 2 }],
+        "moves": [
+          {
+            "prev": { "index": 1, "item": 1 },
+            "current": { "index": 0, "item": 1 }
+          }
+        ]
+      },
+      "patches": [
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "insert", "index": 1, "item": 2 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "insert", "index": 1, "item": 2 }
+      ]
+    },
+    {
+      "prev": [0, 1],
+      "new": [2, 0],
+      "diff": {
+        "removes": [{ "index": 1, "item": 1 }],
+        "inserts": [{ "index": 0, "item": 2 }],
+        "moves": [
+          {
+            "prev": { "index": 0, "item": 0 },
+            "current": { "index": 1, "item": 0 }
+          }
+        ]
+      },
+      "patches": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "insert", "index": 0, "item": 2 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "insert", "index": 0, "item": 2 }
+      ]
+    },
+    {
+      "prev": [0, 1],
+      "new": [2, 1],
+      "diff": {
+        "removes": [{ "index": 0, "item": 0 }],
+        "inserts": [{ "index": 0, "item": 2 }],
+        "sames": [{ "index": 1, "oldItem": 1, "newItem": 1 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "insert", "index": 0, "item": 2 }
+      ],
+      "substitutable": [
+        {
+          "type": "substitute",
+          "index": 0,
+          "from": { "item": 0 },
+          "to": { "item": 2 }
+        }
+      ]
+    },
+    {
+      "prev": [1, 0],
+      "new": [0, 2],
+      "diff": {
+        "removes": [{ "index": 0, "item": 1 }],
+        "inserts": [{ "index": 1, "item": 2 }],
+        "moves": [
+          {
+            "prev": { "index": 1, "item": 0 },
+            "current": { "index": 0, "item": 0 }
+          }
+        ]
+      },
+      "patches": [
+        { "type": "remove", "index": 0, "item": 1 },
+        { "type": "insert", "index": 1, "item": 2 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 0, "item": 1 },
+        { "type": "insert", "index": 1, "item": 2 }
+      ]
+    },
+    {
+      "prev": [0, 1],
+      "new": [2, 3],
+      "diff": {
+        "removes": [{ "index": 0, "item": 0 }, { "index": 1, "item": 1 }],
+        "inserts": [{ "index": 0, "item": 2 }, { "index": 1, "item": 3 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "insert", "index": 0, "item": 2 },
+        { "type": "insert", "index": 1, "item": 3 }
+      ],
+      "substitutable": [
+        {
+          "type": "substitute",
+          "index": 0,
+          "from": { "item": 0 },
+          "to": { "item": 2 }
+        },
+        {
+          "type": "substitute",
+          "index": 1,
+          "from": { "item": 1 },
+          "to": { "item": 3 }
+        }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [],
+      "diff": {
+        "removes": [
+          { "index": 0, "item": 0 },
+          { "index": 1, "item": 1 },
+          { "index": 2, "item": 2 }
+        ]
+      },
+      "patches": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "remove", "index": 0, "item": 0 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "remove", "index": 0, "item": 0 }
+      ]
+    },
+    {
+      "prev": [],
+      "new": [0, 1, 2],
+      "diff": {
+        "inserts": [
+          { "index": 0, "item": 0 },
+          { "index": 1, "item": 1 },
+          { "index": 2, "item": 2 }
+        ]
+      },
+      "patches": [
+        { "type": "insert", "index": 0, "item": 0 },
+        { "type": "insert", "index": 1, "item": 1 },
+        { "type": "insert", "index": 2, "item": 2 }
+      ],
+      "substitutable": [
+        { "type": "insert", "index": 0, "item": 0 },
+        { "type": "insert", "index": 1, "item": 1 },
+        { "type": "insert", "index": 2, "item": 2 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [0],
+      "diff": {
+        "removes": [{ "index": 1, "item": 1 }, { "index": 2, "item": 2 }],
+        "sames": [{ "index": 0, "oldItem": 0, "newItem": 0 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "remove", "index": 1, "item": 1 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "remove", "index": 1, "item": 1 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [1],
+      "diff": {
+        "removes": [{ "index": 0, "item": 0 }, { "index": 2, "item": 2 }],
+        "moves": [
+          {
+            "prev": { "index": 1, "item": 1 },
+            "current": { "index": 0, "item": 1 }
+          }
+        ]
+      },
+      "patches": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "remove", "index": 0, "item": 0 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "remove", "index": 0, "item": 0 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [2],
+      "diff": {
+        "removes": [{ "index": 0, "item": 0 }, { "index": 1, "item": 1 }],
+        "moves": [
+          {
+            "prev": { "index": 2, "item": 2 },
+            "current": { "index": 0, "item": 2 }
+          }
+        ]
+      },
+      "patches": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "remove", "index": 0, "item": 0 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "remove", "index": 0, "item": 0 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [3],
+      "diff": {
+        "removes": [
+          { "index": 0, "item": 0 },
+          { "index": 1, "item": 1 },
+          { "index": 2, "item": 2 }
+        ],
+        "inserts": [{ "index": 0, "item": 3 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "insert", "index": 0, "item": 3 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "remove", "index": 1, "item": 1 },
+        {
+          "type": "substitute",
+          "index": 0,
+          "from": { "item": 0 },
+          "to": { "item": 3 }
+        }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [0, 1],
+      "diff": {
+        "sames": [
+          { "index": 0, "oldItem": 0, "newItem": 0 },
+          { "index": 1, "oldItem": 1, "newItem": 1 }
+        ],
+        "removes": [{ "index": 2, "item": 2 }]
+      },
+      "patches": [{ "type": "remove", "index": 2, "item": 2 }],
+      "substitutable": [{ "type": "remove", "index": 2, "item": 2 }]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [0, 2],
+      "diff": {
+        "sames": [{ "index": 0, "oldItem": 0, "newItem": 0 }],
+        "moves": [
+          {
+            "prev": { "index": 2, "item": 2 },
+            "current": { "index": 1, "item": 2 }
+          }
+        ],
+        "removes": [{ "index": 1, "item": 1 }]
+      },
+      "patches": [{ "type": "remove", "index": 1, "item": 1 }],
+      "substitutable": [{ "type": "remove", "index": 1, "item": 1 }]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [0, 3],
+      "diff": {
+        "sames": [{ "index": 0, "oldItem": 0, "newItem": 0 }],
+        "inserts": [{ "index": 1, "item": 3 }],
+        "removes": [{ "index": 1, "item": 1 }, { "index": 2, "item": 2 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "insert", "index": 1, "item": 3 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 2, "item": 2 },
+        {
+          "type": "substitute",
+          "index": 1,
+          "from": { "item": 1 },
+          "to": { "item": 3 }
+        }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [1, 0],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 0, "item": 0 },
+            "current": { "index": 1, "item": 0 }
+          },
+          {
+            "prev": { "index": 1, "item": 1 },
+            "current": { "index": 0, "item": 1 }
+          }
+        ],
+        "removes": [{ "index": 2, "item": 2 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "move", "from": 0, "to": 1 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "move", "from": 0, "to": 1 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [1, 2],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 1, "item": 1 },
+            "current": { "index": 0, "item": 1 }
+          },
+          {
+            "prev": { "index": 2, "item": 2 },
+            "current": { "index": 1, "item": 2 }
+          }
+        ],
+        "removes": [{ "index": 0, "item": 0 }]
+      },
+      "patches": [{ "type": "remove", "index": 0, "item": 0 }],
+      "substitutable": [{ "type": "remove", "index": 0, "item": 0 }]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [1, 3],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 1, "item": 1 },
+            "current": { "index": 0, "item": 1 }
+          }
+        ],
+        "inserts": [{ "index": 1, "item": 3 }],
+        "removes": [{ "index": 0, "item": 0 }, { "index": 2, "item": 2 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "insert", "index": 1, "item": 3 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "insert", "index": 1, "item": 3 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [2, 0],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 0, "item": 0 },
+            "current": { "index": 1, "item": 0 }
+          },
+          {
+            "prev": { "index": 2, "item": 2 },
+            "current": { "index": 0, "item": 2 }
+          }
+        ],
+        "removes": [{ "index": 1, "item": 1 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "move", "from": 0, "to": 1 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "move", "from": 0, "to": 1 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [2, 1],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 2, "item": 2 },
+            "current": { "index": 0, "item": 2 }
+          }
+        ],
+        "sames": [{ "index": 1, "oldItem": 1, "newItem": 1 }],
+        "removes": [{ "index": 0, "item": 0 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "move", "from": 0, "to": 1 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "move", "from": 0, "to": 1 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [2, 3],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 2, "item": 2 },
+            "current": { "index": 0, "item": 2 }
+          }
+        ],
+        "removes": [{ "index": 0, "item": 0 }, { "index": 1, "item": 1 }],
+        "inserts": [{ "index": 1, "item": 3 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "insert", "index": 1, "item": 3 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 0, "item": 0 },
+        {
+          "type": "substitute",
+          "index": 1,
+          "from": { "item": 1 },
+          "to": { "item": 3 }
+        }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [3, 0],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 0, "item": 0 },
+            "current": { "index": 1, "item": 0 }
+          }
+        ],
+        "removes": [{ "index": 1, "item": 1 }, { "index": 2, "item": 2 }],
+        "inserts": [{ "index": 0, "item": 3 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "insert", "index": 0, "item": 3 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "insert", "index": 0, "item": 3 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [3, 1],
+      "diff": {
+        "sames": [{ "index": 1, "oldItem": 1, "newItem": 1 }],
+        "removes": [{ "index": 0, "item": 0 }, { "index": 2, "item": 2 }],
+        "inserts": [{ "index": 0, "item": 3 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "insert", "index": 0, "item": 3 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 2, "item": 2 },
+        {
+          "type": "substitute",
+          "index": 0,
+          "from": { "item": 0 },
+          "to": { "item": 3 }
+        }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [3, 2],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 2, "item": 2 },
+            "current": { "index": 1, "item": 2 }
+          }
+        ],
+        "removes": [{ "index": 0, "item": 0 }, { "index": 1, "item": 1 }],
+        "inserts": [{ "index": 0, "item": 3 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "insert", "index": 0, "item": 3 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 1, "item": 1 },
+        {
+          "type": "substitute",
+          "index": 0,
+          "from": { "item": 0 },
+          "to": { "item": 3 }
+        }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [3, 4],
+      "diff": {
+        "removes": [
+          { "index": 0, "item": 0 },
+          { "index": 1, "item": 1 },
+          { "index": 2, "item": 2 }
+        ],
+        "inserts": [{ "index": 0, "item": 3 }, { "index": 1, "item": 4 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "insert", "index": 0, "item": 3 },
+        { "type": "insert", "index": 1, "item": 4 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 2, "item": 2 },
+        {
+          "type": "substitute",
+          "index": 0,
+          "from": { "item": 0 },
+          "to": { "item": 3 }
+        },
+        {
+          "type": "substitute",
+          "index": 1,
+          "from": { "item": 1 },
+          "to": { "item": 4 }
+        }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [0, 1, 2],
+      "diff": {
+        "sames": [
+          { "index": 0, "oldItem": 0, "newItem": 0 },
+          { "index": 1, "oldItem": 1, "newItem": 1 },
+          { "index": 2, "oldItem": 2, "newItem": 2 }
+        ]
+      },
+      "patches": [],
+      "substitutable": []
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [0, 1, 3],
+      "diff": {
+        "sames": [
+          { "index": 0, "oldItem": 0, "newItem": 0 },
+          { "index": 1, "oldItem": 1, "newItem": 1 }
+        ],
+        "removes": [{ "index": 2, "item": 2 }],
+        "inserts": [{ "index": 2, "item": 3 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "insert", "index": 2, "item": 3 }
+      ],
+      "substitutable": [
+        {
+          "type": "substitute",
+          "index": 2,
+          "from": { "item": 2 },
+          "to": { "item": 3 }
+        }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [0, 2, 1],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 1, "item": 1 },
+            "current": { "index": 2, "item": 1 }
+          },
+          {
+            "prev": { "index": 2, "item": 2 },
+            "current": { "index": 1, "item": 2 }
+          }
+        ],
+        "sames": [{ "index": 0, "oldItem": 0, "newItem": 0 }]
+      },
+      "patches": [{ "type": "move", "from": 1, "to": 2 }],
+      "substitutable": [{ "type": "move", "from": 1, "to": 2 }]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [0, 2, 3],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 2, "item": 2 },
+            "current": { "index": 1, "item": 2 }
+          }
+        ],
+        "sames": [{ "index": 0, "oldItem": 0, "newItem": 0 }],
+        "inserts": [{ "index": 2, "item": 3 }],
+        "removes": [{ "index": 1, "item": 1 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "insert", "index": 2, "item": 3 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "insert", "index": 2, "item": 3 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [0, 3, 1],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 1, "item": 1 },
+            "current": { "index": 2, "item": 1 }
+          }
+        ],
+        "sames": [{ "index": 0, "oldItem": 0, "newItem": 0 }],
+        "inserts": [{ "index": 1, "item": 3 }],
+        "removes": [{ "index": 2, "item": 2 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "insert", "index": 1, "item": 3 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "insert", "index": 1, "item": 3 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [0, 3, 2],
+      "diff": {
+        "sames": [
+          { "index": 0, "oldItem": 0, "newItem": 0 },
+          { "index": 2, "oldItem": 2, "newItem": 2 }
+        ],
+        "inserts": [{ "index": 1, "item": 3 }],
+        "removes": [{ "index": 1, "item": 1 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "insert", "index": 1, "item": 3 }
+      ],
+      "substitutable": [
+        {
+          "type": "substitute",
+          "index": 1,
+          "from": { "item": 1 },
+          "to": { "item": 3 }
+        }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [0, 3, 4],
+      "diff": {
+        "sames": [{ "index": 0, "oldItem": 0, "newItem": 0 }],
+        "inserts": [{ "index": 1, "item": 3 }, { "index": 2, "item": 4 }],
+        "removes": [{ "index": 1, "item": 1 }, { "index": 2, "item": 2 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "insert", "index": 1, "item": 3 },
+        { "type": "insert", "index": 2, "item": 4 }
+      ],
+      "substitutable": [
+        {
+          "type": "substitute",
+          "index": 1,
+          "from": { "item": 1 },
+          "to": { "item": 3 }
+        },
+        {
+          "type": "substitute",
+          "index": 2,
+          "from": { "item": 2 },
+          "to": { "item": 4 }
+        }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [1, 0, 2],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 0, "item": 0 },
+            "current": { "index": 1, "item": 0 }
+          },
+          {
+            "prev": { "index": 1, "item": 1 },
+            "current": { "index": 0, "item": 1 }
+          }
+        ],
+        "sames": [{ "index": 2, "oldItem": 2, "newItem": 2 }]
+      },
+      "patches": [{ "type": "move", "from": 0, "to": 1 }],
+      "substitutable": [{ "type": "move", "from": 0, "to": 1 }]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [1, 0, 3],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 0, "item": 0 },
+            "current": { "index": 1, "item": 0 }
+          },
+          {
+            "prev": { "index": 1, "item": 1 },
+            "current": { "index": 0, "item": 1 }
+          }
+        ],
+        "inserts": [{ "index": 2, "item": 3 }],
+        "removes": [{ "index": 2, "item": 2 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "move", "from": 0, "to": 1 },
+        { "type": "insert", "index": 2, "item": 3 }
+      ],
+      "substitutable": [
+        {
+          "type": "substitute",
+          "index": 2,
+          "from": { "item": 2 },
+          "to": { "item": 3 }
+        },
+        { "type": "move", "from": 0, "to": 1 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [1, 2, 0],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 0, "item": 0 },
+            "current": { "index": 2, "item": 0 }
+          },
+          {
+            "prev": { "index": 1, "item": 1 },
+            "current": { "index": 0, "item": 1 }
+          },
+          {
+            "prev": { "index": 2, "item": 2 },
+            "current": { "index": 1, "item": 2 }
+          }
+        ]
+      },
+      "patches": [{ "type": "move", "from": 0, "to": 2 }],
+      "substitutable": [{ "type": "move", "from": 0, "to": 2 }]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [1, 2, 3],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 1, "item": 1 },
+            "current": { "index": 0, "item": 1 }
+          },
+          {
+            "prev": { "index": 2, "item": 2 },
+            "current": { "index": 1, "item": 2 }
+          }
+        ],
+        "removes": [{ "index": 0, "item": 0 }],
+        "inserts": [{ "index": 2, "item": 3 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "insert", "index": 2, "item": 3 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "insert", "index": 2, "item": 3 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [1, 3, 0],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 0, "item": 0 },
+            "current": { "index": 2, "item": 0 }
+          },
+          {
+            "prev": { "index": 1, "item": 1 },
+            "current": { "index": 0, "item": 1 }
+          }
+        ],
+        "removes": [{ "index": 2, "item": 2 }],
+        "inserts": [{ "index": 1, "item": 3 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "move", "from": 0, "to": 1 },
+        { "type": "insert", "index": 1, "item": 3 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "move", "from": 0, "to": 1 },
+        { "type": "insert", "index": 1, "item": 3 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [1, 3, 2],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 1, "item": 1 },
+            "current": { "index": 0, "item": 1 }
+          }
+        ],
+        "sames": [{ "index": 2, "oldItem": 2, "newItem": 2 }],
+        "removes": [{ "index": 0, "item": 0 }],
+        "inserts": [{ "index": 1, "item": 3 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "insert", "index": 1, "item": 3 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "insert", "index": 1, "item": 3 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [1, 3, 4],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 1, "item": 1 },
+            "current": { "index": 0, "item": 1 }
+          }
+        ],
+        "removes": [{ "index": 0, "item": 0 }, { "index": 2, "item": 2 }],
+        "inserts": [{ "index": 1, "item": 3 }, { "index": 2, "item": 4 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "insert", "index": 1, "item": 3 },
+        { "type": "insert", "index": 2, "item": 4 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 0, "item": 0 },
+        {
+          "type": "substitute",
+          "index": 2,
+          "from": { "item": 2 },
+          "to": { "item": 4 }
+        },
+        { "type": "insert", "index": 1, "item": 3 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [2, 0, 1],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 0, "item": 0 },
+            "current": { "index": 1, "item": 0 }
+          },
+          {
+            "prev": { "index": 1, "item": 1 },
+            "current": { "index": 2, "item": 1 }
+          },
+          {
+            "prev": { "index": 2, "item": 2 },
+            "current": { "index": 0, "item": 2 }
+          }
+        ]
+      },
+      "patches": [{ "type": "move", "from": 2, "to": 0 }],
+      "substitutable": [{ "type": "move", "from": 2, "to": 0 }]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [2, 0, 3],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 0, "item": 0 },
+            "current": { "index": 1, "item": 0 }
+          },
+          {
+            "prev": { "index": 2, "item": 2 },
+            "current": { "index": 0, "item": 2 }
+          }
+        ],
+        "removes": [{ "index": 1, "item": 1 }],
+        "inserts": [{ "index": 2, "item": 3 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "move", "from": 0, "to": 1 },
+        { "type": "insert", "index": 2, "item": 3 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "move", "from": 0, "to": 1 },
+        { "type": "insert", "index": 2, "item": 3 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [2, 1, 0],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 0, "item": 0 },
+            "current": { "index": 2, "item": 0 }
+          },
+          {
+            "prev": { "index": 2, "item": 2 },
+            "current": { "index": 0, "item": 2 }
+          }
+        ],
+        "sames": [{ "index": 1, "oldItem": 1, "newItem": 1 }]
+      },
+      "patches": [
+        { "type": "move", "from": 0, "to": 2 },
+        { "type": "move", "from": 0, "to": 1 }
+      ],
+      "substitutable": [
+        { "type": "move", "from": 0, "to": 2 },
+        { "type": "move", "from": 0, "to": 1 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [2, 1, 3],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 2, "item": 2 },
+            "current": { "index": 0, "item": 2 }
+          }
+        ],
+        "removes": [{ "index": 0, "item": 0 }],
+        "inserts": [{ "index": 2, "item": 3 }],
+        "sames": [{ "index": 1, "oldItem": 1, "newItem": 1 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "move", "from": 0, "to": 1 },
+        { "type": "insert", "index": 2, "item": 3 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "move", "from": 0, "to": 1 },
+        { "type": "insert", "index": 2, "item": 3 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [2, 3, 0],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 0, "item": 0 },
+            "current": { "index": 2, "item": 0 }
+          },
+          {
+            "prev": { "index": 2, "item": 2 },
+            "current": { "index": 0, "item": 2 }
+          }
+        ],
+        "removes": [{ "index": 1, "item": 1 }],
+        "inserts": [{ "index": 1, "item": 3 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "move", "from": 0, "to": 1 },
+        { "type": "insert", "index": 1, "item": 3 }
+      ],
+      "substitutable": [
+        {
+          "type": "substitute",
+          "index": 1,
+          "from": { "item": 1 },
+          "to": { "item": 3 }
+        },
+        { "type": "move", "from": 0, "to": 1 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [2, 3, 1],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 1, "item": 1 },
+            "current": { "index": 2, "item": 1 }
+          },
+          {
+            "prev": { "index": 2, "item": 2 },
+            "current": { "index": 0, "item": 2 }
+          }
+        ],
+        "removes": [{ "index": 0, "item": 0 }],
+        "inserts": [{ "index": 1, "item": 3 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "move", "from": 0, "to": 1 },
+        { "type": "insert", "index": 1, "item": 3 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "move", "from": 0, "to": 1 },
+        { "type": "insert", "index": 1, "item": 3 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [2, 3, 4],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 2, "item": 2 },
+            "current": { "index": 0, "item": 2 }
+          }
+        ],
+        "removes": [{ "index": 0, "item": 0 }, { "index": 1, "item": 1 }],
+        "inserts": [{ "index": 1, "item": 3 }, { "index": 2, "item": 4 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "insert", "index": 1, "item": 3 },
+        { "type": "insert", "index": 2, "item": 4 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 0, "item": 0 },
+        {
+          "type": "substitute",
+          "index": 1,
+          "from": { "item": 1 },
+          "to": { "item": 3 }
+        },
+        { "type": "insert", "index": 2, "item": 4 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [3, 0, 1],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 0, "item": 0 },
+            "current": { "index": 1, "item": 0 }
+          },
+          {
+            "prev": { "index": 1, "item": 1 },
+            "current": { "index": 2, "item": 1 }
+          }
+        ],
+        "removes": [{ "index": 2, "item": 2 }],
+        "inserts": [{ "index": 0, "item": 3 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "insert", "index": 0, "item": 3 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "insert", "index": 0, "item": 3 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [3, 0, 2],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 0, "item": 0 },
+            "current": { "index": 1, "item": 0 }
+          }
+        ],
+        "sames": [{ "index": 2, "oldItem": 2, "newItem": 2 }],
+        "removes": [{ "index": 1, "item": 1 }],
+        "inserts": [{ "index": 0, "item": 3 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "insert", "index": 0, "item": 3 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "insert", "index": 0, "item": 3 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [3, 0, 4],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 0, "item": 0 },
+            "current": { "index": 1, "item": 0 }
+          }
+        ],
+        "removes": [{ "index": 1, "item": 1 }, { "index": 2, "item": 2 }],
+        "inserts": [{ "index": 0, "item": 3 }, { "index": 2, "item": 4 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "insert", "index": 0, "item": 3 },
+        { "type": "insert", "index": 2, "item": 4 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 1, "item": 1 },
+        {
+          "type": "substitute",
+          "index": 2,
+          "from": { "item": 2 },
+          "to": { "item": 4 }
+        },
+        { "type": "insert", "index": 0, "item": 3 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [3, 1, 0],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 0, "item": 0 },
+            "current": { "index": 2, "item": 0 }
+          }
+        ],
+        "sames": [{ "index": 1, "oldItem": 1, "newItem": 1 }],
+        "removes": [{ "index": 2, "item": 2 }],
+        "inserts": [{ "index": 0, "item": 3 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "move", "from": 0, "to": 1 },
+        { "type": "insert", "index": 0, "item": 3 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "move", "from": 0, "to": 1 },
+        { "type": "insert", "index": 0, "item": 3 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [3, 1, 2],
+      "diff": {
+        "sames": [
+          { "index": 1, "oldItem": 1, "newItem": 1 },
+          { "index": 2, "oldItem": 2, "newItem": 2 }
+        ],
+        "removes": [{ "index": 0, "item": 0 }],
+        "inserts": [{ "index": 0, "item": 3 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "insert", "index": 0, "item": 3 }
+      ],
+      "substitutable": [
+        {
+          "type": "substitute",
+          "index": 0,
+          "from": { "item": 0 },
+          "to": { "item": 3 }
+        }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [3, 1, 4],
+      "diff": {
+        "sames": [{ "index": 1, "oldItem": 1, "newItem": 1 }],
+        "removes": [{ "index": 0, "item": 0 }, { "index": 2, "item": 2 }],
+        "inserts": [{ "index": 0, "item": 3 }, { "index": 2, "item": 4 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "insert", "index": 0, "item": 3 },
+        { "type": "insert", "index": 2, "item": 4 }
+      ],
+      "substitutable": [
+        {
+          "type": "substitute",
+          "index": 0,
+          "from": { "item": 0 },
+          "to": { "item": 3 }
+        },
+        {
+          "type": "substitute",
+          "index": 2,
+          "from": { "item": 2 },
+          "to": { "item": 4 }
+        }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [3, 2, 0],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 0, "item": 0 },
+            "current": { "index": 2, "item": 0 }
+          },
+          {
+            "prev": { "index": 2, "item": 2 },
+            "current": { "index": 1, "item": 2 }
+          }
+        ],
+        "removes": [{ "index": 1, "item": 1 }],
+        "inserts": [{ "index": 0, "item": 3 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "move", "from": 0, "to": 1 },
+        { "type": "insert", "index": 0, "item": 3 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "move", "from": 0, "to": 1 },
+        { "type": "insert", "index": 0, "item": 3 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [3, 2, 1],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 1, "item": 1 },
+            "current": { "index": 2, "item": 1 }
+          },
+          {
+            "prev": { "index": 2, "item": 2 },
+            "current": { "index": 1, "item": 2 }
+          }
+        ],
+        "removes": [{ "index": 0, "item": 0 }],
+        "inserts": [{ "index": 0, "item": 3 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "move", "from": 0, "to": 1 },
+        { "type": "insert", "index": 0, "item": 3 }
+      ],
+      "substitutable": [
+        {
+          "type": "substitute",
+          "index": 0,
+          "from": { "item": 0 },
+          "to": { "item": 3 }
+        },
+        { "type": "move", "from": 0, "to": 1 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [3, 2, 4],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 2, "item": 2 },
+            "current": { "index": 1, "item": 2 }
+          }
+        ],
+        "removes": [{ "index": 0, "item": 0 }, { "index": 1, "item": 1 }],
+        "inserts": [{ "index": 0, "item": 3 }, { "index": 2, "item": 4 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "insert", "index": 0, "item": 3 },
+        { "type": "insert", "index": 2, "item": 4 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 1, "item": 1 },
+        {
+          "type": "substitute",
+          "index": 0,
+          "from": { "item": 0 },
+          "to": { "item": 3 }
+        },
+        { "type": "insert", "index": 2, "item": 4 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [3, 4, 0],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 0, "item": 0 },
+            "current": { "index": 2, "item": 0 }
+          }
+        ],
+        "removes": [{ "index": 1, "item": 1 }, { "index": 2, "item": 2 }],
+        "inserts": [{ "index": 0, "item": 3 }, { "index": 1, "item": 4 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "insert", "index": 0, "item": 3 },
+        { "type": "insert", "index": 1, "item": 4 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 2, "item": 2 },
+        {
+          "type": "substitute",
+          "index": 1,
+          "from": { "item": 1 },
+          "to": { "item": 4 }
+        },
+        { "type": "insert", "index": 0, "item": 3 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [3, 4, 1],
+      "diff": {
+        "moves": [
+          {
+            "prev": { "index": 1, "item": 1 },
+            "current": { "index": 2, "item": 1 }
+          }
+        ],
+        "removes": [{ "index": 0, "item": 0 }, { "index": 2, "item": 2 }],
+        "inserts": [{ "index": 0, "item": 3 }, { "index": 1, "item": 4 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "insert", "index": 0, "item": 3 },
+        { "type": "insert", "index": 1, "item": 4 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 2, "item": 2 },
+        {
+          "type": "substitute",
+          "index": 0,
+          "from": { "item": 0 },
+          "to": { "item": 3 }
+        },
+        { "type": "insert", "index": 1, "item": 4 }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [3, 4, 2],
+      "diff": {
+        "sames": [{ "index": 2, "oldItem": 2, "newItem": 2 }],
+        "removes": [{ "index": 0, "item": 0 }, { "index": 1, "item": 1 }],
+        "inserts": [{ "index": 0, "item": 3 }, { "index": 1, "item": 4 }]
+      },
+      "patches": [
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "insert", "index": 0, "item": 3 },
+        { "type": "insert", "index": 1, "item": 4 }
+      ],
+      "substitutable": [
+        {
+          "type": "substitute",
+          "index": 0,
+          "from": { "item": 0 },
+          "to": { "item": 3 }
+        },
+        {
+          "type": "substitute",
+          "index": 1,
+          "from": { "item": 1 },
+          "to": { "item": 4 }
+        }
+      ]
+    },
+    {
+      "prev": [0, 1, 2],
+      "new": [3, 4, 5],
+      "diff": {
+        "removes": [
+          { "index": 0, "item": 0 },
+          { "index": 1, "item": 1 },
+          { "index": 2, "item": 2 }
+        ],
+        "inserts": [
+          { "index": 0, "item": 3 },
+          { "index": 1, "item": 4 },
+          { "index": 2, "item": 5 }
+        ]
+      },
+      "patches": [
+        { "type": "remove", "index": 2, "item": 2 },
+        { "type": "remove", "index": 1, "item": 1 },
+        { "type": "remove", "index": 0, "item": 0 },
+        { "type": "insert", "index": 0, "item": 3 },
+        { "type": "insert", "index": 1, "item": 4 },
+        { "type": "insert", "index": 2, "item": 5 }
+      ],
+      "substitutable": [
+        {
+          "type": "substitute",
+          "index": 0,
+          "from": { "item": 0 },
+          "to": { "item": 3 }
+        },
+        {
+          "type": "substitute",
+          "index": 1,
+          "from": { "item": 1 },
+          "to": { "item": 4 }
+        },
+        {
+          "type": "substitute",
+          "index": 2,
+          "from": { "item": 2 },
+          "to": { "item": 5 }
+        }
+      ]
+    },
+
+    {
+      "prev": [0, 2, 0, 1, 1],
+      "new": [3, 0, 1, 0, 0],
+      "diff": {
+        "inserts": [
+          { "index": 4, "item": 0 },
+          { "index": 0, "item": 3 }
+        ],
+        "removes": [
+          { "index": 1, "item": 2 },
+          { "index": 4, "item": 1 }
+        ],
+        "moves": [
+          {
+            "current": { "index": 1, "item": 0 },
+            "prev": { "index": 0, "item": 0 }
+          },
+          {
+            "current": { "index": 3, "item": 0 },
+            "prev": { "index": 2, "item": 0 }
+          },
+          {
+            "current": { "index": 2, "item": 1 },
+            "prev": { "index": 3, "item": 1 }
+          }
+        ]
+      },
+      "patches": [
+        { "type": "remove", "index": 4, "item": 1 },
+        { "type": "remove", "index": 1, "item": 2 },
+        { "type": "move", "from": 1, "to": 2 },
+        { "type": "insert", "index": 4, "item": 0 },
+        { "type": "insert", "index": 0, "item": 3 }
+      ],
+      "substitutable": [
+        { "type": "remove", "index": 1, "item": 2 },
+        {
+          "type": "substitute",
+          "index": 4,
+          "from": { "item": 1 },
+          "to": { "item": 0 }
+        },
+        { "type": "move", "from": 1, "to": 2 },
+        { "type": "insert", "index": 0, "item": 3 }
+      ]
+    },
+
+    {
+      "prev": [0, 0, 1, 2, 3, 4],
+      "new": [1, 1, 3, 5, 4, 0],
+      "diff": {
+        "inserts": [
+          { "index": 1, "item": 1 },
+          { "index": 3, "item": 5 }
+        ],
+        "moves": [
+          {
+            "current": { "index": 5, "item": 0 },
+            "prev": { "index": 0, "item": 0 }
+          },
+          {
+            "current": { "index": 0, "item": 1 },
+            "prev": { "index": 2, "item": 1 }
+          },
+          {
+            "current": { "index": 2, "item": 3 },
+            "prev": { "index": 4, "item": 3 }
+          },
+          {
+            "current": { "index": 4, "item": 4 },
+            "prev": { "index": 5, "item": 4 }
+          }
+        ],
+        "removes": [
+          { "index": 1, "item": 0 },
+          { "index": 3, "item": 2 }
+        ]
+      },
+      "patches": [
+        { "type": "remove", "index": 3, "item": 2 },
+        { "type": "remove", "index": 1, "item": 0 },
+        { "type": "move", "from": 0, "to": 3 },
+        { "type": "insert", "index": 1, "item": 1 },
+        { "type": "insert", "index": 3, "item": 5 }
+      ],
+      "substitutable": [
+        {
+          "type": "substitute",
+          "index": 1,
+          "from": { "item": 0 },
+          "to": { "item": 1 }
+        },
+        {
+          "type": "substitute",
+          "index": 3,
+          "from": { "item": 2 },
+          "to": { "item": 5 }
+        },
+        { "type": "move", "from": 0, "to": 5 }
+      ]
+    }
+  ]
+}

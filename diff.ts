@@ -9,7 +9,7 @@ import {
   diff as diffList,
   Patch as ListPatch,
   PatchType as ListPatchType,
-} from "../list-diff/diff.ts";
+} from "./utils/list_diff/diff.ts";
 import {
   AdditionPatch,
   DeletionPatch,

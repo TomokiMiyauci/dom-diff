@@ -1,0 +1,82 @@
+{
+  "type": "object",
+  "properties": {
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "prev": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "new": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "diff": {
+            "type": "object"
+          },
+          "patches": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "oneOf": [
+                {
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "insert"
+                    },
+                    "item": {
+                      "type": "number"
+                    },
+                    "index": {
+                      "type": "number"
+                    }
+                  },
+                  "required": ["type", "item", "index"]
+                },
+                {
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "remove"
+                    },
+                    "item": {
+                      "type": "number"
+                    },
+                    "index": {
+                      "type": "number"
+                    }
+                  },
+                  "required": ["type", "item", "index"]
+                },
+                {
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "move"
+                    },
+                    "from": {
+                      "type": "number"
+                    },
+                    "to": {
+                      "type": "number"
+                    }
+                  },
+                  "required": ["type", "from", "to"]
+                }
+              ]
+            }
+          }
+        },
+        "required": ["prev", "new", "diff", "patches"]
+      }
+    }
+  }
+}
