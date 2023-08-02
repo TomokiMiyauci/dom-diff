@@ -46,37 +46,37 @@ export function applyPatch<T extends Patch<PropertyKey, unknown>>(
 
     if (!node) throw new Error(Msg.notExist(Name.TargetNode));
 
-    const valueType = patch.value.type;
+    const valueType = patch.dataType;
 
-    switch (patch.type) {
+    switch (patch.patchType) {
       case PatchType.Substitute: {
-        ((sync as Record<PropertyKey, SubstituteSync<unknown>>)[valueType])
+        ((sync as Record<PropertyKey, SubstituteSync<unknown>>)[valueType]!)
           .substitute(
             node,
-            patch.value.to,
-            patch.value.from,
+            patch.data.to,
+            patch.data.from,
           );
         break;
       }
       case PatchType.Add: {
-        (sync as Record<PropertyKey, AddSync<unknown>>)[valueType].add(
+        (sync as Record<PropertyKey, AddSync<unknown>>)[valueType]!.add(
           node,
-          patch.value.value,
+          patch.data,
         );
         break;
       }
       case PatchType.Delete: {
-        (sync as Record<PropertyKey, DeleteSync<unknown>>)[valueType].delete(
+        (sync as Record<PropertyKey, DeleteSync<unknown>>)[valueType]!.delete(
           node,
-          patch.value.value,
+          patch.data,
         );
         break;
       }
       case PatchType.Move: {
-        (sync as Record<PropertyKey, MoveSync>)[valueType].move(
+        (sync as Record<PropertyKey, MoveSync>)[valueType]!.move(
           node,
-          patch.value.to,
-          patch.value.from,
+          patch.data.to,
+          patch.data.from,
         );
         break;
       }

@@ -17,36 +17,43 @@ export enum PatchType {
   Move = "move",
 }
 
+interface FromTo<T> {
+  from: T;
+  to: T;
+}
+
+export interface SubstitutePatch<K extends PropertyKey, V> {
+  patchType: PatchType.Substitute;
+  dataType: K;
+  data: FromTo<V>;
+}
+
+export interface DeletionPatch<K extends PropertyKey, V> {
+  patchType: PatchType.Delete;
+  dataType: K;
+  data: V;
+}
+
+export interface AdditionPatch<K extends PropertyKey, V> {
+  patchType: PatchType.Add;
+  dataType: K;
+  data: V;
+}
+
 export interface MovementPatch<K extends PropertyKey> {
-  type: PatchType.Move;
-  value: { type: K; from: number; to: number };
-}
-
-export type EventHandlerName = `on${string}`;
-
-export type Patch<K extends PropertyKey, V> =
-  | EditPatch<K, V>
-  | MovementPatch<K>;
-
-export interface SubstitutePatch<T extends PropertyKey, V> {
-  type: PatchType.Substitute;
-  value: { type: T; from: V; to: V };
-}
-
-export interface DeletionPatch<T extends PropertyKey, V> {
-  type: PatchType.Delete;
-  value: { type: T; value: V };
-}
-
-export interface AdditionPatch<T extends PropertyKey, V> {
-  type: PatchType.Add;
-  value: { type: T; value: V };
+  patchType: PatchType.Move;
+  dataType: K;
+  data: FromTo<number>;
 }
 
 export type EditPatch<K extends PropertyKey, V> =
   | SubstitutePatch<K, V>
   | DeletionPatch<K, V>
   | AdditionPatch<K, V>;
+
+export type Patch<K extends PropertyKey, V> =
+  | EditPatch<K, V>
+  | MovementPatch<K>;
 
 export type CharacterDataLike = Pick<CharacterData, CharacterDataDep>;
 

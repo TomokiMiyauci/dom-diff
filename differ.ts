@@ -9,11 +9,15 @@ import {
   CharacterDataLike,
   EditPatch,
   ElementLike,
-  EventHandlerName,
   PatchType,
   SubstitutePatch,
 } from "./types.ts";
-import { AttributeTarget, EventHandlerTarget, TargetType } from "./target.ts";
+import {
+  AttributeTarget,
+  EventHandlerName,
+  EventHandlerTarget,
+  TargetType,
+} from "./target.ts";
 
 export function* diffMarkup(
   oldNode: Node | ElementLike | CharacterDataLike,
@@ -56,11 +60,9 @@ export class EventHandlerDiffer {
         const newEventHandler = Reflect.get(newNode, name);
 
         yield {
-          type: PatchType.Add,
-          value: {
-            type: TargetType.EventHandler,
-            value: { name, handler: newEventHandler },
-          },
+          patchType: PatchType.Add,
+          dataType: TargetType.EventHandler,
+          data: { name, handler: newEventHandler },
         };
 
         return;
@@ -70,11 +72,9 @@ export class EventHandlerDiffer {
         const oldEventHandler = Reflect.get(oldNode, name);
 
         yield {
-          type: PatchType.Delete,
-          value: {
-            type: TargetType.EventHandler,
-            value: { name, handler: oldEventHandler },
-          },
+          patchType: PatchType.Delete,
+          dataType: TargetType.EventHandler,
+          data: { name, handler: oldEventHandler },
         };
         return;
       }
@@ -84,9 +84,9 @@ export class EventHandlerDiffer {
 
       if (oldEventHandler !== newEventHandler) {
         yield {
-          type: PatchType.Substitute,
-          value: {
-            type: TargetType.EventHandler,
+          patchType: PatchType.Substitute,
+          dataType: TargetType.EventHandler,
+          data: {
             from: { name, handler: oldEventHandler },
             to: { name, handler: newEventHandler },
           },
@@ -114,12 +114,9 @@ export function* diffCharacterData(
   if (equalsCharacterData(oldNode, newNode)) return;
 
   yield {
-    type: PatchType.Substitute,
-    value: {
-      type: TargetType.CharacterData,
-      from: oldNode.data,
-      to: newNode.data,
-    },
+    patchType: PatchType.Substitute,
+    dataType: TargetType.CharacterData,
+    data: { from: oldNode.data, to: newNode.data },
   };
 }
 
@@ -156,11 +153,9 @@ export function* diffAttribute(
       const attrStr = newNode.getAttribute(qualifiedName)!;
 
       return {
-        type: PatchType.Add,
-        value: {
-          type: TargetType.Attribute,
-          value: { name: qualifiedName, value: attrStr },
-        },
+        patchType: PatchType.Add,
+        dataType: TargetType.Attribute,
+        data: { name: qualifiedName, value: attrStr },
       };
     }
 
@@ -168,12 +163,9 @@ export function* diffAttribute(
       const value = newNode.getAttribute(qualifiedName)!;
 
       return {
-        type: PatchType.Delete,
-
-        value: {
-          type: TargetType.Attribute,
-          value: { name: qualifiedName, value },
-        },
+        patchType: PatchType.Delete,
+        dataType: TargetType.Attribute,
+        data: { name: qualifiedName, value },
       };
     }
 
@@ -181,9 +173,9 @@ export function* diffAttribute(
     const rightAttr = newNode.getAttribute(qualifiedName)!;
 
     return {
-      type: PatchType.Substitute,
-      value: {
-        type: TargetType.Attribute,
+      patchType: PatchType.Substitute,
+      dataType: TargetType.Attribute,
+      data: {
         from: { name: qualifiedName, value: leftAttr },
         to: { name: qualifiedName, value: rightAttr },
       },

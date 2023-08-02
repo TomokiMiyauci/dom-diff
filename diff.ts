@@ -48,9 +48,10 @@ export function* diff<T extends Patch<PropertyKey, unknown> = never>(
 
   if (oldNode.nodeName !== newNode.nodeName) {
     return yield {
-      type: PatchType.Substitute,
       paths,
-      value: { type: TargetType.Node, from: oldNode, to: newNode },
+      patchType: PatchType.Substitute,
+      dataType: TargetType.Node,
+      data: { from: oldNode, to: newNode },
     };
   }
 
@@ -144,45 +145,36 @@ function toPatch(
   switch (patch.type) {
     case ListPatchType.Insert: {
       return {
-        type: PatchType.Add,
         paths,
-        value: {
-          type: TargetType.Children,
-          value: { pos: patch.index, node: patch.item },
-        },
+        patchType: PatchType.Add,
+        dataType: TargetType.Children,
+        data: { pos: patch.index, node: patch.item },
       };
     }
     case ListPatchType.Move: {
       return {
-        type: PatchType.Move,
         paths,
-        value: { type: TargetType.Children, from: patch.from, to: patch.to },
+        patchType: PatchType.Move,
+        dataType: TargetType.Children,
+        data: { from: patch.from, to: patch.to },
       };
     }
     case ListPatchType.Remove: {
       return {
-        type: PatchType.Delete,
         paths,
-        value: {
-          type: TargetType.Children,
-          value: {
-            pos: patch.index,
-            node: patch.item,
-          },
-        },
+        patchType: PatchType.Delete,
+        dataType: TargetType.Children,
+        data: { pos: patch.index, node: patch.item },
       };
     }
 
     // TODO(miyauci): support it
     case ListPatchType.Substitute: {
       return {
-        type: PatchType.Substitute,
         paths: paths.concat(patch.index),
-        value: {
-          type: TargetType.Node,
-          from: patch.from.item,
-          to: patch.to.item,
-        },
+        patchType: PatchType.Substitute,
+        dataType: TargetType.Node,
+        data: { from: patch.from.item, to: patch.to.item },
       };
     }
   }
