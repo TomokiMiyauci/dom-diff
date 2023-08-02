@@ -3,18 +3,7 @@
 
 /// <reference lib="dom" />
 
-import { headTail } from "./deps.ts";
-
-// deno-lint-ignore no-explicit-any
-export function not<T extends (...args: any) => boolean>(fn: T): T {
-  const proxy = new Proxy(fn, {
-    apply: (target, thisArg, argArray) => {
-      return !target.apply(thisArg, argArray);
-    },
-  });
-
-  return proxy;
-}
+import { headTail } from "../deps.ts";
 
 export function resolvePaths(
   node: Node,

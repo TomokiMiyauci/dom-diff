@@ -12,3 +12,14 @@ export type UnionToIntersection<U> =
   // deno-lint-ignore no-explicit-any
   (U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I
     : never;
+
+// deno-lint-ignore no-explicit-any
+export function not<T extends (...args: any) => boolean>(fn: T): T {
+  const proxy = new Proxy(fn, {
+    apply: (target, thisArg, argArray) => {
+      return !target.apply(thisArg, argArray);
+    },
+  });
+
+  return proxy;
+}

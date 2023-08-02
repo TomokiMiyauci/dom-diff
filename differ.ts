@@ -3,8 +3,7 @@
 
 /// <reference lib="dom" />
 
-import { distinct } from "./deps.ts";
-import { not } from "./utils.ts";
+import { distinct, not } from "./deps.ts";
 import {
   CharacterDataLike,
   EditPatch,
