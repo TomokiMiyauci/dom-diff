@@ -42,16 +42,16 @@ const enum DataType {
   Children = "children",
 }
 
-export type NodePatch = SubstitutePatch<Node>;
+export type NodePatch =
+  | SubstitutePatch<Node>
+  | MovementPatch
+  | DeletionPatch<{ data: Node }>
+  | AdditionPatch<ChildData>;
 
 interface ChildData {
   node: Node;
   pos: number;
 }
-export type ChildrenPatch =
-  | MovementPatch
-  | AdditionPatch<ChildData>
-  | DeletionPatch<ChildData>;
 
 export function* diff<T extends Record<PropertyKey, Differ<unknown>> = never>(
   oldNode: Node,
@@ -59,7 +59,6 @@ export function* diff<T extends Record<PropertyKey, Differ<unknown>> = never>(
   differs: T = {} as T,
   options?: DiffOptions,
 ): Iterable<
-  | DiffResult<DataType.Children, ChildrenPatch>
   | DiffResult<DataType.Node, NodePatch>
   | (
     & Position
@@ -105,7 +104,6 @@ export function* diffChildren<
   differs: T = {} as T,
   options: DiffOptions,
 ): Iterable<
-  | DiffResult<DataType.Children, ChildrenPatch>
   | DiffResult<DataType.Node, NodePatch>
   | (
     & Position
@@ -163,14 +161,12 @@ export function toKey(node: Node): string {
 export function toPatch(
   patch: ListPatch<Node>,
   paths: readonly number[],
-):
-  | DiffResult<DataType.Children, ChildrenPatch>
-  | DiffResult<DataType.Node, NodePatch> {
+): DiffResult<DataType.Node, NodePatch> {
   switch (patch.type) {
     case ListPatchType.Insert: {
       return {
         paths,
-        type: DataType.Children,
+        type: DataType.Node,
         patch: {
           action: PatchType.Add,
           pos: patch.index,
@@ -180,8 +176,8 @@ export function toPatch(
     }
     case ListPatchType.Move: {
       return {
-        paths,
-        type: DataType.Children,
+        paths: paths.concat(patch.from),
+        type: DataType.Node,
         patch: {
           action: PatchType.Move,
           from: patch.from,
@@ -191,13 +187,9 @@ export function toPatch(
     }
     case ListPatchType.Remove: {
       return {
-        paths,
-        type: DataType.Children,
-        patch: {
-          action: PatchType.Delete,
-          pos: patch.index,
-          node: patch.item,
-        },
+        paths: paths.concat(patch.index),
+        type: DataType.Node,
+        patch: { action: PatchType.Delete, data: patch.item },
       };
     }
 
@@ -217,42 +209,43 @@ export function toPatch(
 }
 
 export function syncNode(node: Node, patch: NodePatch): void {
-  replaceWith(patch.to, node);
-}
-
-export function syncChildren(parent: Node, patch: ChildrenPatch): void {
   switch (patch.action) {
-    case "add": {
-      const toPos = parent.childNodes[patch.pos];
+    case PatchType.Substitute: {
+      replaceWith(patch.to, node);
 
-      parent.insertBefore(patch.node, toPos ?? null);
       break;
     }
-    case "delete": {
-      const target = parent.childNodes[patch.pos];
 
-      if (!target) throw new Error("target node does not exist");
-
-      target.remove();
-      break;
-    }
-    case "move": {
-      const sourceNode = parent.childNodes[patch.from];
-
-      if (!sourceNode) throw new Error("source node does not exist");
-
-      const targetNode = parent.childNodes[patch.to];
+    case PatchType.Move: {
       const isLeft2Right = patch.from < patch.to;
+      const parent = node.parentNode!;
+      const targetNode = node.parentNode!.childNodes[patch.to];
 
       if (isLeft2Right) {
         if (!targetNode) throw new Error("target node does not exist");
 
-        parent.insertBefore(sourceNode, targetNode.nextSibling);
+        parent.insertBefore(node, targetNode.nextSibling);
 
         return;
       }
 
-      parent.insertBefore(sourceNode, targetNode ?? null);
+      parent.insertBefore(node, targetNode ?? null);
+      break;
+    }
+
+    case PatchType.Delete: {
+      const parent = node.parentNode;
+
+      if (!parent) throw new Error("target parent does not exist");
+
+      parent.removeChild(node);
+      break;
+    }
+    case PatchType.Add: {
+      const toPos = node.childNodes[patch.pos];
+
+      node.insertBefore(patch.node, toPos ?? null);
+      break;
     }
   }
 }
