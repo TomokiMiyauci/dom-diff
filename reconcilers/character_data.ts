@@ -3,7 +3,8 @@
 
 /// <reference lib="dom" />
 
-import { type CharacterDataLike, type SubstitutePatch } from "../types.ts";
+import { type CharacterDataLike } from "./types.ts";
+import { type SubstitutePatch } from "../types.ts";
 
 export type CharacterDataPatch = SubstitutePatch<string>;
 

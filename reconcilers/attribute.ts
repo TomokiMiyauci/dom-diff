@@ -3,11 +3,10 @@
 
 /// <reference lib="dom" />
 
-import type { Named } from "./types.ts";
+import type { ElementLike, Named } from "./types.ts";
 import {
   type AdditionPatch,
   type DeletionPatch,
-  type ElementLike,
   type SubstitutePatch,
 } from "../types.ts";
 import { distinct, not } from "../deps.ts";
