@@ -3,13 +3,9 @@
 
 /// <reference lib="dom" />
 
-import { type CharacterDataLike } from "../types.ts";
+import { type CharacterDataLike, type SubstitutePatch } from "../types.ts";
 
-export interface CharacterDataPatch {
-  action: "substitute";
-  from: string;
-  to: string;
-}
+export type CharacterDataPatch = SubstitutePatch<string>;
 
 export function* diffCharacterData(
   oldNode: Node | CharacterDataLike,

@@ -3,24 +3,24 @@
 
 /// <reference lib="dom" />
 
-import { type ElementLike } from "../types.ts";
+import type { Named } from "./types.ts";
+import {
+  type AdditionPatch,
+  type DeletionPatch,
+  type ElementLike,
+  type SubstitutePatch,
+} from "../types.ts";
 import { distinct, not } from "../deps.ts";
 
-interface AttributeAdditionOrDeletionPatch {
-  action: "add" | "delete";
-  name: string;
+interface AttributeSubstitutePatch extends Named, SubstitutePatch<string> {}
+
+interface AttributeData extends Named {
   value: string;
 }
 
-interface AttributeSubstitutePatch {
-  action: "substitute";
-  name: string;
-  from: string;
-  to: string;
-}
-
 export type AttributePatch =
-  | AttributeAdditionOrDeletionPatch
+  | AdditionPatch<AttributeData>
+  | DeletionPatch<AttributeData>
   | AttributeSubstitutePatch;
 
 export function* diffAttribute(

@@ -3,24 +3,24 @@
 
 /// <reference lib="dom" />
 
+import type { Named } from "./types.ts";
 import { imap } from "../deps.ts";
+import {
+  type AdditionPatch,
+  type DeletionPatch,
+  type SubstitutePatch,
+} from "../types.ts";
 
 export type EventHandlerPatch =
-  | EventHandlerAdditionOrDeletionPatch
+  | AdditionPatch<EventHandlerData>
+  | DeletionPatch<EventHandlerData>
   | EventHandlerSubstitutePatch;
 
-interface EventHandlerAdditionOrDeletionPatch {
-  action: "add" | "delete";
-  name: string;
+interface EventHandlerData extends Named {
   handler: unknown;
 }
 
-interface EventHandlerSubstitutePatch {
-  action: "substitute";
-  name: string;
-  from: unknown;
-  to: unknown;
-}
+interface EventHandlerSubstitutePatch extends Named, SubstitutePatch<unknown> {}
 
 export function* diffEventHandler(
   oldNode: Node,

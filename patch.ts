@@ -3,26 +3,27 @@
 
 /// <reference lib="dom" />
 
-import { P, Position } from "./types.ts";
+import type { DiffResult } from "./types.ts";
 import { resolvePaths } from "./utils/node.ts";
 import { format } from "./deps.ts";
 
-export function applyPatch<T extends P<PropertyKey, unknown>>(
+export interface Sync<P> {
+  (node: Node, patch: P): void;
+}
+
+export function applyPatch<T extends DiffResult<PropertyKey, unknown>>(
   root: Node,
-  patches: Iterable<T & Position>,
-  sync: {
-    [k in T["type"]]: (
-      node: Node,
-      patch: Extract<T, { type: k }>["value"],
-    ) => void;
+  results: Iterable<T>,
+  syncs: {
+    [k in T["type"]]: Sync<Extract<T, { type: k }>["patch"]>;
   },
 ): void {
-  for (const patch of patches) {
-    const node = resolvePaths(root, patch.paths);
+  for (const result of results) {
+    const node = resolvePaths(root, result.paths);
 
     if (!node) throw new Error(Msg.notExist(Name.TargetNode));
 
-    sync[patch.type as T["type"]](node, patch.value);
+    syncs[result.type as T["type"]](node, result.patch);
   }
 }
 

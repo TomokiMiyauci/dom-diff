@@ -22,38 +22,22 @@ interface FromTo<T> {
   to: T;
 }
 
-export interface SubstitutePatch<K extends PropertyKey, V> {
-  patchType: `${PatchType.Substitute}`;
-  dataType: K;
-  data: FromTo<V>;
+export interface SubstitutePatch<V> extends FromTo<V> {
+  action: `${PatchType.Substitute}`;
 }
 
-export interface DeletionPatch<K extends PropertyKey, V> {
-  patchType: `${PatchType.Delete}`;
-  dataType: K;
-  data: V;
+export type DeletionPatch<V> = { action: `${PatchType.Delete}` } & V;
+
+export type AdditionPatch<V> = { action: `${PatchType.Add}` } & V;
+
+export interface MovementPatch extends FromTo<number> {
+  action: `${PatchType.Move}`;
 }
 
-export interface AdditionPatch<K extends PropertyKey, V> {
-  patchType: `${PatchType.Add}`;
-  dataType: K;
-  data: V;
+export interface DiffResult<T extends PropertyKey, V> extends Position {
+  type: T;
+  patch: V;
 }
-
-export interface MovementPatch<K extends PropertyKey> {
-  patchType: `${PatchType.Move}`;
-  dataType: K;
-  data: FromTo<number>;
-}
-
-export type EditPatch<K extends PropertyKey, V> =
-  | SubstitutePatch<K, V>
-  | DeletionPatch<K, V>
-  | AdditionPatch<K, V>;
-
-export type Patch<K extends PropertyKey, V> =
-  | EditPatch<K, V>
-  | MovementPatch<K>;
 
 export type CharacterDataLike = Pick<CharacterData, CharacterDataDep>;
 

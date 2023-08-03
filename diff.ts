@@ -7,19 +7,27 @@
 import { enumerate, imap, papplyRest, zip } from "./deps.ts";
 import {
   diff as diffList,
-  Patch as ListPatch,
+  type Patch as ListPatch,
   PatchType as ListPatchType,
 } from "./utils/list_diff/diff.ts";
-import { DiffReport, PatchType, Position } from "./types.ts";
+import {
+  type AdditionPatch,
+  type DeletionPatch,
+  type DiffResult,
+  type MovementPatch,
+  PatchType,
+  type Position,
+  type SubstitutePatch,
+} from "./types.ts";
 import { replaceWith } from "./utils/node.ts";
-import { Yield } from "./utils/iter.ts";
+import { type Yield } from "./utils/iter.ts";
 
 interface Differ<R> {
   (oldNode: Node, newNode: Node): Iterable<R>;
 }
 
 type ToEntry<T extends Record<PropertyKey, Differ<unknown>>> = {
-  [k in keyof T]: { type: k; value: Yield<ReturnType<T[k]>> };
+  [k in keyof T]: { type: k; patch: Yield<ReturnType<T[k]>> };
 }[keyof T];
 
 export interface DiffOptions {
@@ -34,20 +42,16 @@ const enum DataType {
   Children = "children",
 }
 
-export type NodePatch = {
-  action: "substitute";
-  from: Node;
-  to: Node;
-};
-export type ChildrenPatch = {
-  action: "move";
-  from: number;
-  to: number;
-} | {
-  action: "add" | "delete";
+export type NodePatch = SubstitutePatch<Node>;
+
+interface ChildData {
   node: Node;
   pos: number;
-};
+}
+export type ChildrenPatch =
+  | MovementPatch
+  | AdditionPatch<ChildData>
+  | DeletionPatch<ChildData>;
 
 export function* diff<T extends Record<PropertyKey, Differ<unknown>> = never>(
   oldNode: Node,
@@ -55,8 +59,8 @@ export function* diff<T extends Record<PropertyKey, Differ<unknown>> = never>(
   differs: T = {} as T,
   options?: DiffOptions,
 ): Iterable<
-  | DiffReport<DataType.Children, ChildrenPatch>
-  | DiffReport<DataType.Node, NodePatch>
+  | DiffResult<DataType.Children, ChildrenPatch>
+  | DiffResult<DataType.Node, NodePatch>
   | (
     & Position
     & (ToEntry<T>)
@@ -70,18 +74,18 @@ export function* diff<T extends Record<PropertyKey, Differ<unknown>> = never>(
     return yield {
       paths,
       type: DataType.Node,
-      value: { action: PatchType.Substitute, from: oldNode, to: newNode },
+      patch: { action: PatchType.Substitute, from: oldNode, to: newNode },
     };
   }
 
   for (const key in differs) {
     const differ = differs[key]!;
 
-    yield* imap(differ(oldNode, newNode), (value) =>
+    yield* imap(differ(oldNode, newNode), (patch) =>
       ({
         paths,
         type: key,
-        value,
+        patch,
       }) as (
         & Position
         & (ToEntry<T>)
@@ -101,8 +105,8 @@ export function* diffChildren<
   differs: T = {} as T,
   options: DiffOptions,
 ): Iterable<
-  | DiffReport<DataType.Children, ChildrenPatch>
-  | DiffReport<DataType.Node, NodePatch>
+  | DiffResult<DataType.Children, ChildrenPatch>
+  | DiffResult<DataType.Node, NodePatch>
   | (
     & Position
     & (ToEntry<T>)
@@ -160,14 +164,14 @@ export function toPatch(
   patch: ListPatch<Node>,
   paths: readonly number[],
 ):
-  | DiffReport<DataType.Children, ChildrenPatch>
-  | DiffReport<DataType.Node, NodePatch> {
+  | DiffResult<DataType.Children, ChildrenPatch>
+  | DiffResult<DataType.Node, NodePatch> {
   switch (patch.type) {
     case ListPatchType.Insert: {
       return {
         paths,
         type: DataType.Children,
-        value: {
+        patch: {
           action: PatchType.Add,
           pos: patch.index,
           node: patch.item,
@@ -178,7 +182,7 @@ export function toPatch(
       return {
         paths,
         type: DataType.Children,
-        value: {
+        patch: {
           action: PatchType.Move,
           from: patch.from,
           to: patch.to,
@@ -189,7 +193,7 @@ export function toPatch(
       return {
         paths,
         type: DataType.Children,
-        value: {
+        patch: {
           action: PatchType.Delete,
           pos: patch.index,
           node: patch.item,
@@ -202,7 +206,7 @@ export function toPatch(
       return {
         paths: paths.concat(patch.index),
         type: DataType.Node,
-        value: {
+        patch: {
           action: PatchType.Substitute,
           from: patch.from.item,
           to: patch.to.item,
