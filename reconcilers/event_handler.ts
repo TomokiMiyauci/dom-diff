@@ -3,7 +3,6 @@
 
 /// <reference lib="dom" />
 
-import { EventHandlerName } from "../target.ts";
 import { imap } from "../deps.ts";
 
 export type EventHandlerPatch =
@@ -92,6 +91,8 @@ export class EventHandlerReconciler {
 
   sync = syncEventHandler;
 }
+
+type EventHandlerName = `on${string}`;
 
 function on(name: string): EventHandlerName {
   return `on${name}`;
