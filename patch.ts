@@ -3,13 +3,9 @@
 
 /// <reference lib="dom" />
 
-import type { DiffResult } from "./types.ts";
+import type { DiffResult, Sync } from "./types.ts";
 import { resolvePaths } from "./utils/node.ts";
 import { format } from "./deps.ts";
-
-export interface Sync<P> {
-  (node: Node, patch: P): void;
-}
 
 export function applyPatch<T extends DiffResult<PropertyKey, unknown>>(
   root: Node,
@@ -19,6 +15,7 @@ export function applyPatch<T extends DiffResult<PropertyKey, unknown>>(
   },
 ): void {
   for (const result of results) {
+    console.log(result);
     const node = resolvePaths(root, result.paths);
 
     if (!node) throw new Error(Msg.notExist(Name.TargetNode));

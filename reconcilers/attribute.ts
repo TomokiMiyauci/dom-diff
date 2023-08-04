@@ -7,6 +7,7 @@ import type { ElementLike, Named } from "./types.ts";
 import {
   type AdditionPatch,
   type DeletionPatch,
+  type Reconciler,
   type SubstitutePatch,
 } from "../types.ts";
 import { distinct, not } from "../deps.ts";
@@ -106,7 +107,7 @@ export function syncAttribute(
   }
 }
 
-export class AttributeReconciler {
-  static diff = diffAttribute;
-  static sync = syncAttribute;
+export class AttributeReconciler implements Reconciler<AttributePatch> {
+  diff = diffAttribute;
+  sync = syncAttribute;
 }

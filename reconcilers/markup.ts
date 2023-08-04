@@ -10,6 +10,7 @@ import {
   diffCharacterData,
   syncCharacterData,
 } from "./character_data.ts";
+import type { Reconciler } from "../types.ts";
 
 enum DataType {
   Attribute = "attribute",
@@ -48,7 +49,7 @@ export function syncMarkup(node: Node, patch: MarkupPatch): void {
   }
 }
 
-export class MarkupReconciler {
-  static diff = diffMarkup;
-  static sync = syncMarkup;
+export class MarkupReconciler implements Reconciler<MarkupPatch> {
+  diff = diffMarkup;
+  sync = syncMarkup;
 }

@@ -8,6 +8,7 @@ import { imap } from "../deps.ts";
 import {
   type AdditionPatch,
   type DeletionPatch,
+  type Reconciler,
   type SubstitutePatch,
 } from "../types.ts";
 
@@ -79,15 +80,15 @@ export function syncEventHandler(node: Node, patch: EventHandlerPatch): void {
   }
 }
 
-export class EventHandlerReconciler {
+export class EventHandlerReconciler implements Reconciler<EventHandlerPatch> {
   #eventNames: Set<EventHandlerName>;
   constructor(events: Iterable<string>) {
     this.#eventNames = new Set<EventHandlerName>(imap(events, on));
   }
 
-  diff = (oldNode: Node, newNode: Node) => {
+  diff(oldNode: Node, newNode: Node): IterableIterator<EventHandlerPatch> {
     return diffEventHandler(oldNode, newNode, this.#eventNames);
-  };
+  }
 
   sync = syncEventHandler;
 }

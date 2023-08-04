@@ -34,3 +34,16 @@ export interface DiffResult<T extends PropertyKey, V> extends Position {
   type: T;
   patch: V;
 }
+
+export interface Reconciler<T> {
+  diff(oldNode: Node, newNode: Node): Iterable<T>;
+  sync(node: Node, patch: T): void;
+}
+
+export interface Diff<R> {
+  (oldNode: Node, newNode: Node): Iterable<R>;
+}
+
+export interface Sync<P> {
+  (node: Node, patch: P): void;
+}
