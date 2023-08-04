@@ -35,9 +35,15 @@ export interface DiffResult<T extends PropertyKey, V> extends Position {
   patch: V;
 }
 
+/** Difference detection and difference application API. */
 export interface Reconciler<T> {
+  /** Yield the difference between two nodes. */
   diff(oldNode: Node, newNode: Node): Iterable<T>;
-  sync(node: Node, patch: T): void;
+
+  /** Apply the difference and update the {@link node}.
+   * Perform a side-effect, and a destructive change occurs in {@link node}.
+   */
+  update(node: Node, patch: T): void;
 }
 
 export interface Diff<R> {
