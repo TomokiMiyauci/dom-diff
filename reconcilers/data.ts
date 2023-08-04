@@ -28,7 +28,8 @@ export function syncData(node: object, patch: DataPatch): void {
  *
  * @example
  * ```ts
- * import { DataReconciler } from "https://deno.land/x/dom_diff/reconcliers/data.ts";
+ * import { DataReconciler } from "https://deno.land/x/dom_diff/reconcilers/data.ts";
+ * import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
  * declare const data1: string;
  * declare const data2: string;
  * const oldNode = document.createTextNode(data1);
@@ -41,7 +42,6 @@ export function syncData(node: object, patch: DataPatch): void {
  * }
  *
  * assertEquals(oldNode.data, data2);
- *
  * ```
  */
 export class DataReconciler implements Reconciler<DataPatch> {
