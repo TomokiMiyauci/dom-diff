@@ -1,0 +1,6 @@
+{
+  "imports": {
+    "https://deno.land/x/dom_diff/": "./",
+    "https://deno.land/std/": "https://deno.land/std@0.190.0/"
+  }
+}
