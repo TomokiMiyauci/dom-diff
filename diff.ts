@@ -1,10 +1,11 @@
 // Copyright © 2023 Tomoki Miyauchi. All rights reserved. MIT license.
 // This module is browser compatible.
+// deno-lint-ignore-file no-explicit-any
 
 /// <reference lib="dom" />
 /// <reference lib="dom.iterable" />
 
-import { enumerate, imap, papplyRest, zip } from "./deps.ts";
+import { enumerate, imap, mapValues, papplyRest, zip } from "./deps.ts";
 import {
   diff as diffList,
   type Patch as ListPatch,
@@ -13,20 +14,44 @@ import {
 import {
   type AdditionPatch,
   type DeletionPatch,
+  type Diff,
   type DiffResult,
   type MovementPatch,
   PatchType,
   type Position,
+  type Reconciler,
   type SubstitutePatch,
+  Sync,
 } from "./types.ts";
 import { replaceWith } from "./utils/node.ts";
 import { type Yield } from "./utils/iter.ts";
+import { applyPatch } from "./patch.ts";
 
-interface Differ<R> {
-  (oldNode: Node, newNode: Node): Iterable<R>;
+export class Differ {
+  #diffMap: Record<string, Diff<unknown>>;
+  #syncMap: Record<string, Sync<any>>;
+  constructor(...reconcilers: Reconciler<any>[]) {
+    const reconcilerMap = Object.fromEntries(Object.entries(reconcilers));
+    const differs = mapValues(
+      reconcilerMap,
+      (reconciler) => reconciler.diff.bind(reconciler),
+    );
+    this.#diffMap = differs;
+    const syncs = mapValues(
+      reconcilerMap,
+      (reconciler) => reconciler.sync.bind(reconciler),
+    );
+    this.#syncMap = { ...syncs, node: syncNode };
+  }
+
+  apply(oldNode: Node, newNode: Node): void {
+    const results = diff(oldNode, newNode, this.#diffMap);
+
+    applyPatch(oldNode, results, this.#syncMap);
+  }
 }
 
-type ToEntry<T extends Record<PropertyKey, Differ<unknown>>> = {
+type ToEntry<T extends Record<PropertyKey, Diff<unknown>>> = {
   [k in keyof T]: { type: k; patch: Yield<ReturnType<T[k]>> };
 }[keyof T];
 
@@ -53,7 +78,7 @@ interface ChildData {
   pos: number;
 }
 
-export function* diff<T extends Record<PropertyKey, Differ<unknown>> = never>(
+export function* diff<T extends Record<PropertyKey, Diff<unknown>> = never>(
   oldNode: Node,
   newNode: Node,
   differs: T = {} as T,
@@ -80,15 +105,14 @@ export function* diff<T extends Record<PropertyKey, Differ<unknown>> = never>(
   for (const key in differs) {
     const differ = differs[key]!;
 
-    yield* imap(differ(oldNode, newNode), (patch) =>
-      ({
-        paths,
-        type: key,
-        patch,
-      }) as (
-        & Position
-        & (ToEntry<T>)
-      ));
+    yield* imap(
+      differ(oldNode, newNode),
+      (patch) =>
+        ({ paths, type: key, patch }) as (
+          & Position
+          & (ToEntry<T>)
+        ),
+    );
   }
 
   yield* diffChildren(oldNode.childNodes, newNode.childNodes, differs, {
@@ -97,7 +121,7 @@ export function* diff<T extends Record<PropertyKey, Differ<unknown>> = never>(
 }
 
 export function* diffChildren<
-  T extends Record<PropertyKey, Differ<unknown>> = never,
+  T extends Record<PropertyKey, Diff<unknown>> = never,
 >(
   oldNode: Iterable<Node>,
   newNode: Iterable<Node>,
