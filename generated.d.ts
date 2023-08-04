@@ -3,6 +3,7 @@ export type ElementDep =
   | "getAttribute"
   | "attributes"
   | "getAttributeNames"
-  | "getAttributeNode"
   | "setAttribute"
   | "removeAttribute";
+
+export type AttrDep = "name" | "value";
