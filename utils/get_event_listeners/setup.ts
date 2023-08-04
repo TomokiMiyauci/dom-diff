@@ -2,10 +2,25 @@ import { EventMapRegistry } from "./registry.ts";
 import { normalizeOptions } from "./utils.ts";
 import { eventTargetRegistry } from "./constants.ts";
 
-export function setup(
-  addEventListener: EventTarget["addEventListener"],
-  removeEventListener: EventTarget["removeEventListener"],
-): void {
+/** Setup options. */
+export interface SetupOptions {
+  /**
+   * @default EventTarget.prototype.addEventListener
+   */
+  addEventListener?: EventTarget["addEventListener"];
+
+  /**
+   * @default EventTarget.prototype.removeEventListener
+   */
+  removeEventListener?: EventTarget["removeEventListener"];
+}
+
+export function setup(options?: SetupOptions): void {
+  const addEventListener = options?.addEventListener ??
+    EventTarget.prototype.addEventListener;
+  const removeEventListener = options?.removeEventListener ??
+    EventTarget.prototype.removeEventListener;
+
   const $addEventListener = new Proxy(addEventListener, {
     apply: (target, thisArg, argArray) => {
       const [type, listener, options] = argArray;

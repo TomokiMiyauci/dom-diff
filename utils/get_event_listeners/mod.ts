@@ -1,7 +1,7 @@
 import { type EventInfo } from "./types.ts";
 import { eventTargetRegistry } from "./constants.ts";
 
-export { setup } from "./setup.ts";
+export { setup, type SetupOptions } from "./setup.ts";
 export type { EventInfo } from "./types.ts";
 export function getEventListeners(
   target: EventTarget,
