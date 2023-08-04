@@ -4,7 +4,7 @@
 /// <reference lib="dom" />
 
 import { distinct } from "../deps.ts";
-import { AdditionPatch, DeletionPatch } from "../types.ts";
+import type { AdditionPatch, DeletionPatch, Reconciler } from "../types.ts";
 import {
   type EventInfo,
   getEventListeners,
@@ -111,7 +111,7 @@ function intersectBy<T>(
   return result;
 }
 
-export class EventListenerReconciler {
-  static diff = diffEventLister;
-  static sync = syncEventListener;
+export class EventListenerReconciler implements Reconciler<EventInfo> {
+  diff = diffEventLister;
+  sync = syncEventListener;
 }
