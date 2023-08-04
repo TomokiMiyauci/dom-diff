@@ -2,7 +2,7 @@
 // Copyright © 2023 Tomoki Miyauchi. All rights reserved. MIT license.
 
 import { diff, diffChildren } from "./diff.ts";
-import { Patch, Position } from "./types.ts";
+import { DiffResult } from "./types.ts";
 import { assertEquals, describe, it } from "./_dev_deps.ts";
 import {
   Document,
@@ -21,7 +21,7 @@ describe("diff", () => {
   type TextCase = [
     from: _Node,
     to: _Node,
-    expected: (Position & Patch<PropertyKey, unknown>)[],
+    expected: DiffResult<PropertyKey, unknown>[],
     description?: string,
   ];
 
@@ -44,9 +44,8 @@ describe("diff", () => {
         span,
         [{
           paths: [],
-          patchType: "substitute",
-          dataType: "node",
-          data: { from: div, to: span },
+          type: "node",
+          patch: { action: "substitute", from: div, to: span },
         }],
         "not same tag name",
       ],
@@ -56,9 +55,8 @@ describe("diff", () => {
         textA,
         [{
           paths: [],
-          patchType: "substitute",
-          dataType: "node",
-          data: { from: div, to: textA },
+          type: "node",
+          patch: { action: "substitute", from: div, to: textA },
         }],
         "not same node type(#element, #text)",
       ],
@@ -68,9 +66,8 @@ describe("diff", () => {
         [
           {
             paths: [],
-            patchType: "substitute",
-            dataType: "node",
-            data: { from: div, to: fragment },
+            type: "node",
+            patch: { action: "substitute", from: div, to: fragment },
           },
         ],
         "not same node type(#element, #document-fragment)",
@@ -93,16 +90,14 @@ describe("diff", () => {
       [tree(div, div), tree(div, div2), []],
       [tree(div, div3), tree(div, textA), [
         {
-          patchType: "delete",
-          paths: [],
-          dataType: "children",
-          data: { pos: 0, node: div3 },
+          paths: [0],
+          type: "node",
+          patch: { action: "delete", node: div3 },
         },
         {
-          patchType: "add",
           paths: [],
-          dataType: "children",
-          data: { pos: 0, node: textA },
+          type: "node",
+          patch: { action: "add", pos: 0, node: textA },
         },
       ]],
     ];
@@ -119,7 +114,7 @@ describe("diffChildren", () => {
   type TextCase = [
     from: Iterable<_Node>,
     to: Iterable<_Node>,
-    expected: (Position & Patch<PropertyKey, unknown>)[],
+    expected: (DiffResult<PropertyKey, unknown>)[],
     description?: string,
   ];
 
@@ -127,92 +122,80 @@ describe("diffChildren", () => {
     const table: TextCase[] = [
       [[], [], []],
       [[div], [], [{
-        paths: [],
-        patchType: "delete",
-        dataType: "children",
-        data: { pos: 0, node: div },
+        paths: [0],
+        type: "node",
+        patch: { action: "delete", node: div },
       }]],
       [[], [div], [{
         paths: [],
-        patchType: "add",
-        dataType: "children",
-        data: { pos: 0, node: div },
+
+        type: "node",
+        patch: { action: "add", pos: 0, node: div },
       }]],
       [[div], [div], []],
       [[div], [div2], [], "same node value but not same reference"],
       [[div], [span], [{
-        paths: [],
-        patchType: "delete",
-        dataType: "children",
-        data: { pos: 0, node: div },
+        paths: [0],
+        type: "node",
+        patch: { action: "delete", node: div },
       }, {
         paths: [],
-        patchType: "add",
-        dataType: "children",
-        data: { pos: 0, node: span },
+        type: "node",
+        patch: { action: "add", pos: 0, node: span },
       }], "TODO: As SES, substitute is correct"],
       [[textA], [span], [{
-        paths: [],
-        patchType: "delete",
-        dataType: "children",
-        data: { pos: 0, node: textA },
+        paths: [0],
+        type: "node",
+        patch: { action: "delete", node: textA },
       }, {
         paths: [],
-        patchType: "add",
-        dataType: "children",
-        data: { pos: 0, node: span },
+        type: "node",
+        patch: { action: "add", pos: 0, node: span },
       }], "TODO: As SES, substitute is correct"],
       [[div, div], [div], [
         {
-          paths: [],
-          patchType: "delete",
-          dataType: "children",
-          data: { pos: 1, node: div },
+          paths: [1],
+          type: "node",
+          patch: { action: "delete", node: div },
         },
       ]],
       [[div], [div, div], [
         {
           paths: [],
-          patchType: "add",
-          dataType: "children",
-          data: { pos: 1, node: div },
+          type: "node",
+          patch: { action: "add", pos: 1, node: div },
         },
       ]],
       [[div, div2], [div, div2], []],
       [[div, span], [div, div], [
         {
-          patchType: "delete",
-          paths: [],
-          dataType: "children",
-          data: { pos: 1, node: span },
+          paths: [1],
+          type: "node",
+          patch: { action: "delete", node: span },
         },
         {
-          patchType: "add",
           paths: [],
-          dataType: "children",
-          data: { pos: 1, node: div },
+          type: "node",
+          patch: { action: "add", pos: 1, node: div },
         },
       ]],
       [[span, div], [div, div], [
         {
-          patchType: "delete",
-          paths: [],
-          dataType: "children",
-          data: { pos: 0, node: span },
+          paths: [0],
+          type: "node",
+          patch: { action: "delete", node: span },
         },
         {
-          patchType: "add",
           paths: [],
-          dataType: "children",
-          data: { pos: 1, node: div },
+          type: "node",
+          patch: { action: "add", pos: 1, node: div },
         },
       ]],
       [[span, div], [div, span], [
         {
-          patchType: "move",
-          paths: [],
-          dataType: "children",
-          data: { from: 0, to: 1 },
+          paths: [0],
+          type: "node",
+          patch: { action: "move", from: 0, to: 1 },
         },
       ]],
     ];

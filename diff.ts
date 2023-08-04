@@ -70,7 +70,7 @@ const enum DataType {
 export type NodePatch =
   | SubstitutePatch<Node>
   | MovementPatch
-  | DeletionPatch<{ data: Node }>
+  | DeletionPatch<{ node: Node }>
   | AdditionPatch<ChildData>;
 
 interface ChildData {
@@ -126,7 +126,7 @@ export function* diffChildren<
   oldNode: Iterable<Node>,
   newNode: Iterable<Node>,
   differs: T = {} as T,
-  options: DiffOptions,
+  options: DiffOptions = {},
 ): Iterable<
   | DiffResult<DataType.Node, NodePatch>
   | (
@@ -213,7 +213,7 @@ export function toPatch(
       return {
         paths: paths.concat(patch.index),
         type: DataType.Node,
-        patch: { action: PatchType.Delete, data: patch.item },
+        patch: { action: PatchType.Delete, node: patch.item },
       };
     }
 
