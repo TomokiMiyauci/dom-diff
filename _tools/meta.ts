@@ -10,7 +10,7 @@ export const makeOptions = (version: string): BuildOptions => ({
   entryPoints: ["./mod.ts"],
   outDir: "./npm",
   package: {
-    name: "dom-diff",
+    name: "domiff",
     version,
     description: "The real DOM diffing",
     keywords: [
