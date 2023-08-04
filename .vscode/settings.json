@@ -17,5 +17,9 @@
   "deno.inlayHints.parameterNames.suppressWhenArgumentMatchesName": false,
   "deno.codeLens.references": true,
   "deno.codeLens.implementations": true,
-  "deno.codeLens.referencesAllFunctions": true
+  "deno.codeLens.referencesAllFunctions": true,
+
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
