@@ -1,6 +1,8 @@
 // Copyright © 2023 Tomoki Miyauchi. All rights reserved. MIT license.
 // This module is browser compatible.
 
+/// <reference lib="dom" />
+
 export interface Position {
   /** Absolute path to target node. */
   paths: readonly number[];
