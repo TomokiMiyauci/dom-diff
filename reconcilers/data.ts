@@ -3,6 +3,7 @@
 
 import { PatchType, type Reconciler, type SubstitutePatch } from "../types.ts";
 
+/** Patch for `data` property. */
 export type DataPatch = SubstitutePatch<unknown>;
 
 export function* diffData(
