@@ -10,8 +10,7 @@
       "getAttributeNode",
       "setAttribute",
       "removeAttribute"
-    ],
-    "CharacterData": ["data"]
+    ]
   },
   "output": {
     "title": "The output type name format",

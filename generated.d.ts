@@ -6,5 +6,3 @@ export type ElementDep =
   | "getAttributeNode"
   | "setAttribute"
   | "removeAttribute";
-
-export type CharacterDataDep = "data";
