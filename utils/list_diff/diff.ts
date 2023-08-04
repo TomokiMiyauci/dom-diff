@@ -120,7 +120,7 @@ export function diffToPatch<T>(
 
   if (!options.substitutable) {
     const removePatches: Patch<T>[] = removes
-      .toSorted(({ index: a }, { index: b }) => b - a)
+      .sort(({ index: a }, { index: b }) => b - a)
       .map(createRemovePatch);
     const insertPatches = inserts.map(createInsertPatch);
 
