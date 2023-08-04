@@ -3,7 +3,7 @@
 
 /// <reference lib="dom" />
 
-import type { ElementLike, Named } from "./types.ts";
+import type { AttrLike, ElementLike } from "./types.ts";
 import {
   type AdditionPatch,
   type DeletionPatch,
@@ -13,16 +13,13 @@ import {
 } from "../types.ts";
 import { distinct, not } from "../deps.ts";
 
-interface AttributeSubstitutePatch extends Named, SubstitutePatch<string> {}
-
-interface AttributeData extends Named {
-  value: string;
-}
+interface AttributeSubstitutePatch
+  extends Pick<AttrLike, "name">, SubstitutePatch<Attr["value"]> {}
 
 /** Patch for attribute. */
 export type AttributePatch =
-  | AdditionPatch<AttributeData>
-  | DeletionPatch<AttributeData>
+  | AdditionPatch<AttrLike>
+  | DeletionPatch<AttrLike>
   | AttributeSubstitutePatch;
 
 export function* diffAttribute(
