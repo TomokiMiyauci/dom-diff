@@ -7,10 +7,10 @@
       "getAttribute",
       "attributes",
       "getAttributeNames",
-      "getAttributeNode",
       "setAttribute",
       "removeAttribute"
-    ]
+    ],
+    "Attr": ["name", "value"]
   },
   "output": {
     "title": "The output type name format",
