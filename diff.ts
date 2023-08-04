@@ -44,8 +44,12 @@ export class Differ {
     this.#syncMap = { ...syncs, node: syncNode };
   }
 
-  apply(oldNode: Node, newNode: Node): void {
-    const results = diff(oldNode, newNode, this.#diffMap);
+  apply(
+    oldNode: Node,
+    newNode: Node,
+    options?: { keying(node: Node): unknown },
+  ): void {
+    const results = diff(oldNode, newNode, this.#diffMap, options);
 
     applyPatch(oldNode, results, this.#syncMap);
   }
@@ -60,6 +64,7 @@ export interface DiffOptions {
    * @default []
    */
   paths?: readonly number[];
+  keying?(node: Node): unknown;
 }
 
 const enum DataType {
@@ -115,8 +120,11 @@ export function* diff<T extends Record<PropertyKey, Diff<unknown>> = never>(
     );
   }
 
+  const keying = options?.keying ?? toKey;
+
   yield* diffChildren(oldNode.childNodes, newNode.childNodes, differs, {
     paths,
+    keying,
   });
 }
 
@@ -136,7 +144,8 @@ export function* diffChildren<
 > {
   const oldNodes = Array.from(oldNode);
   const newNodes = Array.from(newNode);
-  const patches = diffList(oldNodes, newNodes, { keying: toKey });
+  const keying = options.keying ?? toKey;
+  const patches = diffList(oldNodes, newNodes, { keying });
   const paths = options.paths ?? [];
   const $toPatch = papplyRest(toPatch, paths);
 
