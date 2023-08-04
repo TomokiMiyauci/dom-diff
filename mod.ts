@@ -3,7 +3,10 @@
 
 export { Differ } from "./diff.ts";
 export { type DataPatch, DataReconciler } from "./reconcilers/data.ts";
-export { AttributeReconciler } from "./reconcilers/attribute.ts";
+export {
+  type AttributePatch,
+  AttributeReconciler,
+} from "./reconcilers/attribute.ts";
 export { MarkupReconciler } from "./reconcilers/markup.ts";
 export { EventHandlerReconciler } from "./reconcilers/event_handler.ts";
 export { EventListenerReconciler } from "./reconcilers/event_listener.ts";
