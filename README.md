@@ -26,7 +26,7 @@ import {
   EventListenerReconciler,
   MarkupReconciler,
   setupEventListener,
-} from "https://deno.land/dom_diff/mod.ts";
+} from "https://deno.land/x/dom_diff/mod.ts";
 
 setupEventListener();
 
@@ -54,7 +54,7 @@ This allows modularization of difference application.
 For example, to perform event handler difference detection, use the `EventHandlerReconciler`.
 
 ```ts
-import { EventHandlerReconciler } from "https://deno.land/dom_diff/mod.ts";
+import { EventHandlerReconciler } from "https://deno.land/x/dom_diff/mod.ts";
 
 const reconciler = new EventHandlerReconciler(["click", "blur", "mouseenter"]);
 ```
@@ -104,7 +104,7 @@ For example, the following DOM:
 The following is the result of differential application:
 
 ```ts
-import { Differ } from "https://deno.land/dom_diff/mod.ts";
+import { Differ } from "https://deno.land/x/dom_diff/mod.ts";
 
 declare const oldNode: Node;
 declare const newNode: Node;
@@ -161,7 +161,7 @@ By default, `nodeName` is used as the key.
 This can be changed as follows:
 
 ```ts
-import { Differ } from "https://deno.land/dom_diff/mod.ts";
+import { Differ } from "https://deno.land/x/dom_diff/mod.ts";
 
 declare const oldNode: Node;
 declare const newNode: Node;
