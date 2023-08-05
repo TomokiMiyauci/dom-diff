@@ -57,11 +57,8 @@ For example, to perform event handler difference detection, use the
 ```ts
 import { EventHandlerReconciler } from "https://deno.land/x/dom_diff/mod.ts";
 
-const reconciler = new EventHandlerReconciler(["click", "blur", "mouseenter"]);
+const reconciler = new EventHandlerReconciler();
 ```
-
-Event handlers cannot be **enumerated**, so you must specify the name of the
-event to be monitored.
 
 Various [reconciler](docs/reconciler.md) are provided.
 
