@@ -24,6 +24,7 @@ export {
 } from "../utils/get_event_listeners/mod.ts";
 export type { EventListeners, GetEventListeners };
 
+/** Event listener patch. */
 export type EventListenerPatch =
   | AdditionPatch<Listener>
   | DeletionPatch<Listener>;
