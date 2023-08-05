@@ -8,11 +8,7 @@ export function normalizeOptions(
   options?: boolean | Omit<AddEventListenerOptions, "signal"> | undefined,
 ): NormalizedAddEventListenerOptions {
   if (typeof options === "boolean" || typeof options === "undefined") {
-    return {
-      useCapture: options ?? false,
-      once: false,
-      passive: false,
-    };
+    return { useCapture: options ?? false, once: false, passive: false };
   }
 
   const useCapture = options.capture ?? false;

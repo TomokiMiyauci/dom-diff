@@ -1,8 +1,16 @@
-export interface EventInfo extends NormalizedAddEventListenerOptions {
+// Copyright © 2023 Tomoki Miyauchi. All rights reserved. MIT license.
+// This module is browser compatible.
+
+export interface Listener extends NormalizedAddEventListenerOptions {
   type: string;
-  listener: EventListenerOrEventListenerObject;
+  listener: EventListenerOrEventListenerObject | null;
 }
 
-export type NormalizedAddEventListenerOptions = Required<
-  Omit<AddEventListenerOptions, "signal">
->;
+export interface NormalizedAddEventListenerOptions
+  extends Required<Omit<AddEventListenerOptions, "signal" | "capture">> {
+  useCapture: boolean;
+}
+
+export interface EventListeners {
+  [k: string]: Listener[];
+}
