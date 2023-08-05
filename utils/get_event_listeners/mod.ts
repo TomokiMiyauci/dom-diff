@@ -1,14 +1,10 @@
-import { type EventInfo } from "./types.ts";
-import { eventTargetRegistry } from "./constants.ts";
+// Copyright © 2023 Tomoki Miyauchi. All rights reserved. MIT license.
+// This module is browser compatible.
 
-export { setup, type SetupOptions } from "./setup.ts";
-export type { EventInfo } from "./types.ts";
-export function getEventListeners(
-  target: EventTarget,
-): Record<string, EventInfo[]> {
-  const eventMap = eventTargetRegistry.get(target);
-
-  if (!eventMap) return {};
-
-  return Object.fromEntries(eventMap);
-}
+export {
+  type GetEventListeners,
+  getEventListeners,
+  setup,
+  type SetupOptions,
+} from "./setup.ts";
+export type { EventListeners, Listener } from "./types.ts";
