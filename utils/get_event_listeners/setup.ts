@@ -20,7 +20,7 @@ export interface SetupOptions {
 }
 
 export interface GetEventListeners {
-  (target: EventTarget): EventListeners;
+  (target: object): EventListeners;
 }
 
 /** Setup event listener monitoring.
@@ -107,7 +107,7 @@ export function handlerRemoveEventListener<T extends object, R>(
 /** Get {@linkcode EventListeners}.
  * Before this can be done, {@linkcode setup} must be performed.
  */
-export function getEventListeners(target: EventTarget): EventListeners {
+export function getEventListeners(target: object): EventListeners {
   const eventMap = eventTargetRegistry.get(target);
 
   if (!eventMap) return {};
