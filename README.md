@@ -26,16 +26,16 @@ import {
   Differ,
   EventListenerReconciler,
   MarkupReconciler,
-  setupEventListener,
+  setupEventListeners,
 } from "https://deno.land/x/dom_diff/mod.ts";
 
-setupEventListener();
+const getEventListeners = setupEventListeners();
 
 declare const oldNode: Node;
 declare const newNode: Node;
 const differ = new Differ(
   new MarkupReconciler(),
-  new EventListenerReconciler(),
+  new EventListenerReconciler(getEventListeners),
 );
 
 differ.apply(oldNode, newNode);
@@ -44,7 +44,7 @@ differ.apply(oldNode, newNode);
 The `oldNode` is updated by calculating the difference from the `newNode`.
 
 > **Note** Normally, event listeners cannot be referenced, so `addEventListener`
-> and `removeEventListener` are replaced to proxies by `setupEventListener`.
+> and `removeEventListener` are replaced to proxies by `setupEventListeners`.
 
 ### Reconciler
 
