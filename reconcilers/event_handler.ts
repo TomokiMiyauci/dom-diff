@@ -1,100 +1,127 @@
 // Copyright © 2023 Tomoki Miyauchi. All rights reserved. MIT license.
 // This module is browser compatible.
 
-/// <reference lib="dom" />
-
 import type { Named } from "./types.ts";
-import { imap } from "../deps.ts";
+import { distinct } from "../deps.ts";
 import {
   type AdditionPatch,
   type DeletionPatch,
+  PatchType,
   type Reconciler,
   type SubstitutePatch,
 } from "../types.ts";
+
+export type EventHandlerName = `on${string}`;
+interface EventHandlerSubstitutePatch extends Named, SubstitutePatch<unknown> {}
 
 export type EventHandlerPatch =
   | AdditionPatch<EventHandlerData>
   | DeletionPatch<EventHandlerData>
   | EventHandlerSubstitutePatch;
 
-interface EventHandlerData extends Named {
-  handler: unknown;
+interface EventHandlerData {
+  name: EventHandlerName;
+  listener: unknown;
 }
 
-interface EventHandlerSubstitutePatch extends Named, SubstitutePatch<unknown> {}
+/** Get all event handler properties. */
+export function getEventHandlers(obj: object): Map<EventHandlerName, unknown> {
+  const eventHandlers: Map<EventHandlerName, unknown> = new Map();
+
+  for (const key in obj) {
+    if (isEventHandlerName(key)) {
+      eventHandlers.set(key, Reflect.get(obj, key));
+    }
+  }
+
+  return eventHandlers;
+}
+
+/** Whether the {@linkcode name} is {@linkcode EventHandlerName} or not.
+ * @see https://html.spec.whatwg.org/multipage/webappapis.html#event-handler-attributes
+ */
+export function isEventHandlerName(name: string): name is EventHandlerName {
+  return /^on.+/.test(name);
+}
 
 export function* diffEventHandler(
-  oldNode: Node,
-  newNode: Node,
-  events: Set<EventHandlerName>,
-): IterableIterator<EventHandlerPatch> {
-  const filteredNames = [...events.values()].filter((name) =>
-    Reflect.has(oldNode, name) || Reflect.has(newNode, name)
+  oldNode: object,
+  newNode: object,
+): Generator<EventHandlerPatch> {
+  const oldEventHandlers = getEventHandlers(oldNode);
+  const newEventHandlers = getEventHandlers(newNode);
+  const allEventHandlerNames = distinct(
+    [...oldEventHandlers.keys()].concat(...newEventHandlers.keys()),
   );
 
-  for (const name of filteredNames) {
-    if (!Reflect.has(oldNode, name)) {
-      const newEventHandler = Reflect.get(newNode, name);
+  for (const name of allEventHandlerNames) {
+    if (!oldEventHandlers.has(name)) {
+      const listener = Reflect.get(newNode, name);
 
-      yield { action: "add", name, handler: newEventHandler };
+      yield { action: PatchType.Add, name, listener };
       continue;
     }
 
-    if (!Reflect.has(newNode, name)) {
-      const oldEventHandler = Reflect.get(oldNode, name);
+    if (!newEventHandlers.has(name)) {
+      const listener = oldEventHandlers.get(name);
 
-      yield { action: "delete", name, handler: oldEventHandler };
+      yield { action: PatchType.Delete, name, listener };
       continue;
     }
 
-    const oldEventHandler = Reflect.get(oldNode, name);
-    const newEventHandler = Reflect.get(newNode, name);
+    const oldListener = oldEventHandlers.get(name);
+    const newListener = newEventHandlers.get(name);
 
-    if (oldEventHandler !== newEventHandler) {
+    if (oldListener !== newListener) {
       yield {
-        action: "substitute",
+        action: PatchType.Substitute,
         name,
-        from: oldEventHandler,
-        to: newEventHandler,
+        from: oldListener,
+        to: newListener,
       };
     }
   }
 }
 
-export function syncEventHandler(node: Node, patch: EventHandlerPatch): void {
+export function syncEventHandler(node: object, patch: EventHandlerPatch): void {
   switch (patch.action) {
-    case "add": {
-      Reflect.set(node, patch.name, patch.handler);
+    case PatchType.Add: {
+      Reflect.set(node, patch.name, patch.listener);
       break;
     }
-    case "delete": {
+
+    case PatchType.Delete: {
       Reflect.set(node, patch.name, null);
-
       break;
     }
-    case "substitute": {
+
+    case PatchType.Substitute: {
       Reflect.set(node, patch.name, patch.to);
-
       break;
     }
   }
 }
 
+/** Event handler reconciler.
+ * @example
+ * ```ts
+ * import { EventHandlerReconciler } from "https://deno.land/x/dom_diff/reconcilers/event_handler.ts";
+ * import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
+ * declare const listener: () => {};
+ * const reconciler = new EventHandlerReconciler();
+ * const oldNode = document.createElement("button");
+ * const newNode = document.createElement("button");
+ *
+ * newNode.onclick = listener;
+ *
+ * const patches = reconciler.diff(oldNode, newNode);
+ * for (const patch of patches) reconciler.update(oldNode, patch);
+ *
+ * assertEquals(oldNode.onclick, listener);
+ * ```
+ */
 export class EventHandlerReconciler implements Reconciler<EventHandlerPatch> {
-  #eventNames: Set<EventHandlerName>;
-  constructor(events: Iterable<string>) {
-    this.#eventNames = new Set<EventHandlerName>(imap(events, on));
-  }
+  diff = diffEventHandler;
 
-  diff(oldNode: Node, newNode: Node): IterableIterator<EventHandlerPatch> {
-    return diffEventHandler(oldNode, newNode, this.#eventNames);
-  }
-
-  sync = syncEventHandler;
-}
-
-type EventHandlerName = `on${string}`;
-
-function on(name: string): EventHandlerName {
-  return `on${name}`;
+  update = syncEventHandler;
 }
