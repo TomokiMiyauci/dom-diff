@@ -14,6 +14,7 @@ import {
 export type EventHandlerName = `on${string}`;
 interface EventHandlerSubstitutePatch extends Named, SubstitutePatch<unknown> {}
 
+/** Patch for event handler. */
 export type EventHandlerPatch =
   | AdditionPatch<EventHandlerData>
   | DeletionPatch<EventHandlerData>
