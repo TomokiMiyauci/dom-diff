@@ -7,7 +7,7 @@ export {
   type AttributePatch,
   AttributeReconciler,
 } from "./reconcilers/attribute.ts";
-export { MarkupReconciler } from "./reconcilers/markup.ts";
+export { type MarkupPatch, MarkupReconciler } from "./reconcilers/markup.ts";
 export {
   type EventHandlerPatch,
   EventHandlerReconciler,
