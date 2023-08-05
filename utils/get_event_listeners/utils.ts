@@ -9,12 +9,13 @@ export function normalizeOptions(
 ): NormalizedAddEventListenerOptions {
   if (typeof options === "boolean" || typeof options === "undefined") {
     return {
-      capture: options ?? false,
+      useCapture: options ?? false,
       once: false,
       passive: false,
     };
   }
 
-  const { capture = false, passive = false, once = false } = options;
-  return { capture, passive, once };
+  const useCapture = options.capture ?? false;
+  const { passive = false, once = false } = options;
+  return { useCapture, passive, once };
 }
