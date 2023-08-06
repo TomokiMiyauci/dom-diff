@@ -3,11 +3,11 @@
 
 /// <reference lib="dom" />
 
-import type { ElementDep, AttrDep } from "../generated.d.ts";
+import type { AttrDep, ElementDep } from "../generated.d.ts";
 
 export interface Named {
   name: string;
 }
 
 export type ElementLike = Pick<Element, ElementDep>;
-export type AttrLike = Pick<Attr, AttrDep>
+export type AttrLike = Pick<Attr, AttrDep>;
