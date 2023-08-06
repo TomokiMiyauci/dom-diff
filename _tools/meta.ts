@@ -10,7 +10,7 @@ export const makeOptions = (version: string): BuildOptions => ({
   entryPoints: ["./mod.ts"],
   outDir: "./npm",
   package: {
-    name: "domiff",
+    name: "@miyauci/dom-diff",
     version,
     description: "The real DOM diffing",
     keywords: [
@@ -32,6 +32,7 @@ export const makeOptions = (version: string): BuildOptions => ({
     },
     sideEffects: false,
     type: "module",
+    publishConfig: { access: "public" },
   },
   packageManager: "pnpm",
 });

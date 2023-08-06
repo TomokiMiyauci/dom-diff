@@ -13,7 +13,7 @@ import * as mod from "https://deno.land/x/dom_diff/mod.ts";
 npm:
 
 ```bash
-npm i dom-diff
+npm i @miyauci/dom-diff
 ```
 
 ## Usage
