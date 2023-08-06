@@ -1,3 +1,31 @@
+# [1.0.0-beta.2](https://github.com/TomokiMiyauci/dom-diff/compare/1.0.0-beta.1...1.0.0-beta.2) (2023-08-06)
+
+
+### Bug Fixes
+
+* **data:** fix typo ([91189cd](https://github.com/TomokiMiyauci/dom-diff/commit/91189cde7f91c74851b327dc50131b013d76d3eb))
+
+
+### Features
+
+* **event_handler:** change function interface to object from Node ([988507d](https://github.com/TomokiMiyauci/dom-diff/commit/988507da05dbed0a086058836982970af69fc185))
+* **event_handler:** export event handler related types ([652210a](https://github.com/TomokiMiyauci/dom-diff/commit/652210a865dc5f9bc010ea089355c4eb3018d903))
+* **mod:** export DataReconciler related types ([cdee8c9](https://github.com/TomokiMiyauci/dom-diff/commit/cdee8c9275f4a5869d986180ebfc9cac75196fe2))
+* **mod:** export event listener related types ([40b3d85](https://github.com/TomokiMiyauci/dom-diff/commit/40b3d85f1f78a9ba160f5063d6d4cd9af1e0da73))
+* **mod:** export markup reconciler related types ([bcdcf57](https://github.com/TomokiMiyauci/dom-diff/commit/bcdcf57219c05c1dac116ecb2f5c8499a808c5d4))
+* **mod:** export related types ([994229f](https://github.com/TomokiMiyauci/dom-diff/commit/994229f77777b63f48bf849b7a7adad228babffd))
+* **mod:** export related types ([77cfd60](https://github.com/TomokiMiyauci/dom-diff/commit/77cfd6017651697e934f154dd797ace6fd8b67b0))
+* **mod:** export related types ([f8740bc](https://github.com/TomokiMiyauci/dom-diff/commit/f8740bc01af3dcb592efdc4a8852e1d0a1750f67))
+* **setup:** extend acceptable types ([b19d8e7](https://github.com/TomokiMiyauci/dom-diff/commit/b19d8e7c74f07b9a6b5d3fe7702ee628131d796a))
+* **types:** change normalized option interface ([8a58929](https://github.com/TomokiMiyauci/dom-diff/commit/8a58929d167ccf4e7038959cab5a3d285ea3c0be))
+* **types:** change reconciler interface ([9d9b83b](https://github.com/TomokiMiyauci/dom-diff/commit/9d9b83bc449d67ebcd1c78aa784922b359772147))
+* **utils:** change prop name to useCapture from capture ([9d2390b](https://github.com/TomokiMiyauci/dom-diff/commit/9d2390bbe24d592026cc270e9ac10e64458f01f6))
+
+
+### Performance Improvements
+
+* **event_listener:** improve filtering performance to use composite symbol ([b438719](https://github.com/TomokiMiyauci/dom-diff/commit/b438719dcd0fe3e62efba729d5a0b115bec4fc42))
+
 # 1.0.0-beta.1 (2023-08-04)
 
 
