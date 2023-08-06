@@ -39,7 +39,7 @@ export class Differ {
     this.#diffMap = differs;
     const syncs = mapValues(
       reconcilerMap,
-      (reconciler) => reconciler.sync.bind(reconciler),
+      (reconciler) => reconciler.update.bind(reconciler),
     );
     this.#syncMap = { ...syncs, node: syncNode };
   }
